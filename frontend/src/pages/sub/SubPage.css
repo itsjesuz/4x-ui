@@ -1,0 +1,1494 @@
+/* Global Reset to prevent double scrollbars and double-bounce on mobile */
+html,
+body,
+body.dark,
+body.light,
+#app {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+/* Color & Theme tokens */
+:root {
+  --font-family: "Inter", "Estedad", "Vazirmatn", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --bg-radial-1: rgba(59, 130, 246, 0.12); /* Blue */
+  --bg-radial-2: rgba(168, 85, 247, 0.10); /* Purple */
+  --bg-radial-3: rgba(236, 72, 153, 0.08); /* Pink */
+  
+  /* Dark Mode Default values */
+  --page-bg: #07080c;
+  --card-bg: rgba(20, 24, 39, 0.55);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --card-shadow: 0 30px 70px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  --section-bg: rgba(255, 255, 255, 0.035);
+  --section-border: rgba(255, 255, 255, 0.06);
+  --item-bg-hover: rgba(255, 255, 255, 0.07);
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.65);
+  --text-tertiary: rgba(255, 255, 255, 0.4);
+  --separator: rgba(255, 255, 255, 0.06);
+  
+  --tg-blue: #229ED9;
+  --tg-bg: rgba(34, 158, 217, 0.12);
+  --tg-border: rgba(34, 158, 217, 0.3);
+}
+
+/* Light Theme overrides */
+.subscription-page:not(.is-dark) {
+  --page-bg: #f2f3f7;
+  --card-bg: rgba(255, 255, 255, 0.45);
+  --card-border: rgba(255, 255, 255, 0.5);
+  --card-shadow: 0 30px 60px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  --section-bg: rgba(0, 0, 0, 0.025);
+  --section-border: rgba(0, 0, 0, 0.04);
+  --item-bg-hover: rgba(0, 0, 0, 0.04);
+  --text-primary: #1c1c1e;
+  --text-secondary: rgba(0, 0, 0, 0.6);
+  --text-tertiary: rgba(0, 0, 0, 0.35);
+  --separator: rgba(0, 0, 0, 0.05);
+  
+  --bg-radial-1: rgba(59, 130, 246, 0.08);
+  --bg-radial-2: rgba(168, 85, 247, 0.06);
+  --bg-radial-3: rgba(236, 72, 153, 0.04);
+  
+  --tg-bg: rgba(34, 158, 217, 0.08);
+  --tg-border: rgba(34, 158, 217, 0.2);
+}
+
+/* Ultra Black Dark Mode */
+.subscription-page.is-dark.is-ultra {
+  --page-bg: #000000;
+  --card-bg: rgba(10, 10, 10, 0.6);
+  --card-border: rgba(255, 255, 255, 0.06);
+  --section-bg: rgba(255, 255, 255, 0.025);
+}
+
+/* Main Container & BG Orbs */
+.subscription-page {
+  font-family: var(--font-family) !important;
+  width: 100% !important;
+  height: 100% !important;
+  background-color: var(--page-bg);
+  position: relative;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch;
+  z-index: 1;
+}
+
+.subscription-page::before,
+.subscription-page::after,
+.subscription-page-bg-orb-3 {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  -webkit-filter: blur(120px);
+  z-index: -2;
+  pointer-events: none;
+}
+
+/* Orb 1: Blue - Top Left */
+.subscription-page::before {
+  width: 500px;
+  height: 500px;
+  background: var(--bg-radial-1);
+  top: -100px;
+  left: -100px;
+  animation: floatOrb1 20s infinite alternate ease-in-out;
+}
+
+/* Orb 2: Purple - Bottom Right */
+.subscription-page::after {
+  width: 600px;
+  height: 600px;
+  background: var(--bg-radial-2);
+  bottom: -150px;
+  right: -150px;
+  animation: floatOrb2 25s infinite alternate ease-in-out;
+}
+
+/* Orb 3: Pink - Center Left */
+.subscription-page-bg-orb-3 {
+  width: 400px;
+  height: 400px;
+  background: var(--bg-radial-3);
+  top: 40%;
+  left: -50px;
+  animation: floatOrb1 18s infinite alternate-reverse ease-in-out;
+}
+
+@keyframes floatOrb1 {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+  50% { transform: translate(80px, 60px) scale(1.15) rotate(120deg); }
+  100% { transform: translate(-40px, -40px) scale(0.9) rotate(360deg); }
+}
+
+@keyframes floatOrb2 {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+  50% { transform: translate(-80px, -100px) scale(1.15) rotate(-180deg); }
+  100% { transform: translate(60px, 60px) scale(0.9) rotate(-360deg); }
+}
+
+.subscription-page .ant-layout,
+.subscription-page .ant-layout-content {
+  background: transparent !important;
+}
+
+.subscription-page .content {
+  padding: 16px 8px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Staggered load-in animation config */
+@keyframes iosFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(22px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Primary Glass Card (Only place with backdrop-filter) */
+.subscription-card {
+  margin-top: 8px;
+  background: var(--card-bg) !important;
+  backdrop-filter: blur(44px) saturate(190%);
+  -webkit-backdrop-filter: blur(44px) saturate(190%);
+  border: 1px solid var(--card-border) !important;
+  border-radius: 30px !important;
+  box-shadow: var(--card-shadow) !important;
+  overflow: hidden;
+  animation: iosFadeInUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.subscription-card .ant-card-body {
+  padding: 24px 20px !important;
+}
+
+/* Staggered children transitions inside the card body */
+.company-header {
+  animation: iosFadeInUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.1s;
+}
+
+.ios-metrics-grid {
+  animation: iosFadeInUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.18s;
+}
+
+.usage-summary {
+  animation: iosFadeInUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.26s;
+}
+
+/* Stagger list sections sequentially */
+.ios-list-header:nth-of-type(1),
+.ios-list-group:nth-of-type(1) {
+  animation: iosFadeInUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.34s;
+}
+
+.ios-list-header:nth-of-type(2),
+.ios-list-group:nth-of-type(2) {
+  animation: iosFadeInUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.42s;
+}
+
+.apps-row {
+  animation: iosFadeInUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.5s;
+}
+
+/* iOS Top Bar Settings Button style */
+.subscription-card .ant-card-head {
+  border-bottom: 1px solid var(--separator) !important;
+  background: transparent !important;
+  padding: 0 20px !important;
+}
+
+.subscription-card .ant-card-head-title {
+  color: var(--text-primary) !important;
+  font-weight: 700 !important;
+  font-size: 16px !important;
+}
+
+.toolbar-btn {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  border-radius: 50%;
+  padding: 0;
+  background: var(--section-bg) !important;
+  border: 1px solid var(--section-border) !important;
+  color: var(--text-primary) !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toolbar-btn:hover {
+  background: var(--item-bg-hover) !important;
+  transform: scale(1.08) rotate(15deg);
+}
+
+.toolbar-btn .anticon {
+  font-size: 16px;
+}
+
+/* Header & Company Brand Branding */
+.company-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 24px;
+  gap: 12px;
+}
+
+.company-logo {
+  width: 84px;
+  height: 84px;
+  border-radius: 22px; /* iOS Squircle */
+  object-fit: cover;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2), 0 0 0 1px var(--card-border);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.company-logo:hover {
+  transform: scale(1.08) rotate(3deg);
+}
+
+.company-title {
+  font-size: 23px;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.3px;
+  color: var(--text-primary);
+  background: linear-gradient(135deg, var(--text-primary) 30%, var(--text-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.company-socials {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.social-btn {
+  background: var(--tg-bg) !important;
+  border: 1px solid var(--tg-border) !important;
+  color: var(--tg-blue) !important;
+  font-weight: 600;
+  font-size: 12px;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: none;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.social-btn:hover {
+  background: rgba(34, 158, 217, 0.22) !important;
+  transform: translateY(-1px) scale(1.03);
+}
+
+/* iOS Grouped List Layouts */
+.ios-list-header {
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  color: var(--text-secondary);
+  margin: 0 0 6px 14px;
+  font-family: var(--font-family);
+}
+
+.ios-list-group {
+  background: var(--section-bg);
+  border: 1px solid var(--section-border);
+  border-radius: 18px;
+  overflow: hidden;
+  margin-bottom: 22px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+/* iOS Metrics Grid (Control Center look) */
+.ios-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.ios-metric-box {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.015) 100%) !important;
+  border: 1px solid var(--section-border);
+  border-radius: 18px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.subscription-page:not(.is-dark) .ios-metric-box {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.4) 100%) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.ios-metric-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 2px;
+}
+
+.ios-metric-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
+
+.ios-metric-box:hover .ios-metric-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* Dynamic color themes for metric icons */
+.ios-metric-icon.status-active {
+  background: rgba(52, 199, 89, 0.15) !important;
+  color: #34c759 !important;
+}
+.ios-metric-icon.status-inactive {
+  background: rgba(255, 59, 48, 0.15) !important;
+  color: #ff3b30 !important;
+}
+.ios-metric-icon.status-unlimited {
+  background: rgba(175, 82, 222, 0.15) !important;
+  color: #af52de !important;
+}
+.ios-metric-icon.expiry {
+  background: rgba(88, 86, 214, 0.15) !important;
+  color: #5856d6 !important;
+}
+.ios-metric-icon.download {
+  background: rgba(52, 199, 89, 0.15) !important;
+  color: #34c759 !important;
+}
+.ios-metric-icon.upload {
+  background: rgba(0, 122, 255, 0.15) !important;
+  color: #007aff !important;
+}
+.ios-metric-icon.online {
+  background: rgba(48, 176, 199, 0.15) !important;
+  color: #30b0c7 !important;
+}
+
+.ios-metric-box:hover {
+  background: var(--item-bg-hover);
+  transform: translateY(-2px);
+}
+
+.ios-metric-box:active {
+  transform: translateY(0) scale(0.985);
+}
+
+.ios-metric-full {
+  grid-column: span 2;
+}
+
+.ios-metric-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ios-metric-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Pulsing Status Dot Indicators */
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-inline-end: 8px;
+  flex-shrink: 0;
+}
+
+.status-dot.active {
+  background-color: #34c759;
+  box-shadow: 0 0 8px #34c759;
+  animation: statusPulseGreen 1.5s infinite alternate ease-in-out;
+}
+
+.status-dot.inactive {
+  background-color: #ff3b30;
+  box-shadow: 0 0 8px #ff3b30;
+  animation: statusPulseRed 1.5s infinite alternate ease-in-out;
+}
+
+.status-dot.unlimited {
+  background-color: #af52de;
+  box-shadow: 0 0 8px #af52de;
+  animation: statusPulsePurple 1.5s infinite alternate ease-in-out;
+}
+
+@keyframes statusPulseGreen {
+  0% { transform: scale(0.85); opacity: 0.6; box-shadow: 0 0 4px rgba(52, 199, 89, 0.4); }
+  100% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 12px rgba(52, 199, 89, 0.8); }
+}
+
+@keyframes statusPulseRed {
+  0% { transform: scale(0.85); opacity: 0.6; box-shadow: 0 0 4px rgba(255, 59, 48, 0.4); }
+  100% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 12px rgba(255, 59, 48, 0.8); }
+}
+
+@keyframes statusPulsePurple {
+  0% { transform: scale(0.85); opacity: 0.6; box-shadow: 0 0 4px rgba(175, 82, 222, 0.4); }
+  100% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 12px rgba(175, 82, 222, 0.8); }
+}
+
+/* iOS Grouped Rows (Table View Rows) */
+.ios-list-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  min-height: 48px;
+  transition: background-color 0.2s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border-bottom: 1px solid var(--separator);
+}
+
+.ios-list-row:last-child {
+  border-bottom: none;
+}
+
+.ios-list-row:hover {
+  background-color: var(--item-bg-hover);
+}
+
+.ios-list-row:active {
+  transform: scale(0.995);
+}
+
+/* iOS row components */
+.ios-row-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.ios-icon-wrapper {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: bold;
+  font-size: 10px;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
+
+.ios-list-row:hover .ios-icon-wrapper {
+  transform: scale(1.08) rotate(3deg);
+}
+
+/* Colors for specific protocol badges */
+.ios-icon-wrapper.sub-tag-all { background: linear-gradient(135deg, #ff9500, #ff5e3a); }
+.ios-icon-wrapper.sub-tag-sub { background: linear-gradient(135deg, #34c759, #248a3d); }
+.ios-icon-wrapper.sub-tag-json { background: linear-gradient(135deg, #af52de, #7d35a0); }
+.ios-icon-wrapper.sub-tag-clash { background: linear-gradient(135deg, #ff9500, #c67400); }
+.ios-icon-wrapper.sub-tag-vless { background: linear-gradient(135deg, #5856d6, #3b3a9e); }
+.ios-icon-wrapper.sub-tag-vmess { background: linear-gradient(135deg, #007aff, #0056b3); }
+.ios-icon-wrapper.sub-tag-trojan { background: linear-gradient(135deg, #ff2d55, #c11f3f); }
+.ios-icon-wrapper.sub-tag-shadowsocks { background: linear-gradient(135deg, #5ac8fa, #3294c2); }
+.ios-icon-wrapper.sub-tag-hysteria2 { background: linear-gradient(135deg, #ff3b30, #c2271f); }
+.ios-icon-wrapper.sub-tag-tuic { background: linear-gradient(135deg, #4cd964, #349645); }
+.ios-icon-wrapper.sub-tag-link { background: linear-gradient(135deg, #8e8e93, #636366); }
+
+.ios-row-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ios-row-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Action Buttons (Copy/QR) inside lists */
+.copy-btn {
+  border-radius: 8px !important;
+  background: var(--section-bg) !important;
+  border: 1px solid var(--section-border) !important;
+  color: var(--text-primary) !important;
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.copy-btn:hover {
+  background: var(--item-bg-hover) !important;
+  transform: scale(1.08);
+}
+
+.copy-btn:active {
+  transform: scale(0.92);
+}
+
+/* Interactive custom checkmark copy animations */
+.copy-btn.copied-anim {
+  animation: copySuccess 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: #34c759 !important;
+  border-color: rgba(52, 199, 89, 0.4) !important;
+  background: rgba(52, 199, 89, 0.12) !important;
+}
+
+@keyframes copySuccess {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.25); box-shadow: 0 0 10px rgba(52, 199, 89, 0.4); }
+  100% { transform: scale(1); }
+}
+
+.qr-btn {
+  border-radius: 8px !important;
+  background: var(--section-bg) !important;
+  border: 1px solid var(--section-border) !important;
+  color: var(--text-primary) !important;
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.qr-btn:hover {
+  background: var(--item-bg-hover) !important;
+  transform: scale(1.08);
+}
+
+.qr-btn:active {
+  transform: scale(0.92);
+}
+
+/* iOS Bottom Client Application Buttons */
+.apps-row {
+  margin-top: 24px;
+}
+
+.app-col {
+  padding: 0 4px;
+}
+
+.ios-action-pill {
+  width: 100%;
+  height: 46px;
+  border-radius: 14px !important;
+  font-weight: 600 !important;
+  font-size: 15px !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid var(--section-border) !important;
+  background: var(--section-bg) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.ios-action-pill:hover,
+.ios-action-pill:focus {
+  background: var(--item-bg-hover) !important;
+  border-color: var(--text-secondary) !important;
+  color: var(--text-primary) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12) !important;
+}
+
+.ios-action-pill:active {
+  transform: translateY(0) scale(0.975);
+}
+
+/* Popover details - Apple Translucent QRs */
+.sub-link-qr-popover {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  gap: 8px;
+}
+
+.qr-tag {
+  margin: 0 !important;
+  font-weight: 600;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .subscription-card .ant-card-body {
+    padding: 16px 14px !important;
+  }
+  
+  .company-logo {
+    width: 76px;
+    height: 76px;
+  }
+  
+  .company-title {
+    font-size: 20px;
+  }
+  
+  .ios-metrics-grid {
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  
+  .ios-metric-box {
+    padding: 12px 14px;
+    border-radius: 14px;
+  }
+  
+  .ios-list-group {
+    border-radius: 14px;
+  }
+  
+  .app-col {
+    margin-bottom: 8px;
+  }
+  
+  .app-col:last-child {
+    margin-bottom: 0;
+  }
+}
+
+/* iOS Profile Card */
+.ios-profile-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--section-border);
+  padding: 10px 16px;
+  border-radius: 20px;
+  margin-top: 6px;
+  max-width: 100%;
+  text-align: left;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  animation: iosFadeInUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.12s;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: default;
+}
+
+.subscription-page:not(.is-dark) .ios-profile-card {
+  background: rgba(0, 0, 0, 0.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.ios-profile-card:hover {
+  transform: translateY(-2px) scale(1.02);
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.subscription-page:not(.is-dark) .ios-profile-card:hover {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.ios-profile-avatar-container {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.ios-profile-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px; /* iOS Squircle */
+  background: linear-gradient(135deg, #007aff, #5856d6);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 16px;
+  box-shadow: 0 4px 10px rgba(0, 122, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.ios-profile-card:hover .ios-profile-avatar {
+  transform: scale(1.05) rotate(3deg);
+}
+
+/* Status badge dot overlay on avatar */
+.ios-profile-status-badge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  background-color: #34c759;
+  border: 2px solid var(--card-bg);
+  border-radius: 50%;
+  box-shadow: 0 0 6px #34c759;
+}
+
+/* Adjust base layout for RTL direction */
+[dir="rtl"] .ios-profile-card {
+  text-align: right;
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .ios-profile-status-badge {
+  right: auto;
+  left: -2px;
+}
+
+.ios-profile-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  gap: 2px;
+}
+
+[dir="rtl"] .ios-profile-info {
+  align-items: flex-end;
+}
+
+.ios-profile-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+.ios-profile-username {
+  font-size: 11px;
+  font-weight: 600;
+  color: #007aff;
+  line-height: 1.2;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.2s ease;
+}
+
+.telegram-inline-icon {
+  font-size: 10px;
+  transform: rotate(-30deg) translate(0.5px, -0.5px);
+}
+
+.is-dark .ios-profile-username {
+  color: #64d2ff;
+}
+
+.ios-profile-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+[dir="rtl"] .ios-profile-name-row {
+  flex-direction: row-reverse;
+}
+
+.ios-order-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.subscription-page:not(.is-dark) .ios-order-badge {
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Floating Support Button */
+.ios-floating-support {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #229ed9, #0088cc);
+  color: #ffffff !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 25px rgba(34, 158, 217, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  z-index: 9999;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.ios-floating-support:hover {
+  transform: scale(1.1) translateY(-3px);
+  box-shadow: 0 14px 30px rgba(34, 158, 217, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.ios-floating-support:active {
+  transform: scale(0.95) translateY(0);
+}
+
+.ios-floating-support .support-icon {
+  font-size: 22px;
+  transform: rotate(-30deg) translate(2px, -2px);
+  transition: transform 0.3s ease;
+}
+
+.ios-floating-support:hover .support-icon {
+  transform: rotate(-25deg) scale(1.15) translate(2px, -2px);
+}
+
+/* Pulsing outer ring */
+.ios-floating-support::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border-radius: 50%;
+  border: 2px solid #229ed9;
+  opacity: 0;
+  animation: supportPulseAnim 2s infinite ease-out;
+}
+
+@keyframes supportPulseAnim {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(1.15);
+    opacity: 0;
+  }
+}
+
+/* RTL Layout adjustments for Floating button */
+[dir="rtl"] .ios-floating-support {
+  right: auto;
+  left: 24px;
+}
+
+/* iOS Accordion Item Styling */
+.ios-accordion-item {
+  transition: background-color 0.25s ease;
+}
+
+.ios-accordion-item:hover {
+  background-color: var(--item-bg-hover);
+}
+
+.ios-accordion-header {
+  transition: background-color 0.2s ease;
+}
+
+.ios-accordion-header:active {
+  background-color: var(--separator);
+}
+
+/* Adjust lists group bottom padding when accordion is inside */
+.ios-list-group .ios-accordion-item:last-child {
+  border-bottom: none !important;
+}
+
+/* iOS Search & Filter Section */
+.ios-search-filter-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 4px 16px 4px;
+  animation: iosFadeInUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.38s;
+}
+
+.ios-search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--section-bg);
+  border: 1px solid var(--section-border);
+  border-radius: 12px;
+  padding: 0 12px;
+  height: 38px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.ios-search-wrapper:focus-within {
+  border-color: #007aff;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
+}
+
+.subscription-page.is-dark .ios-search-wrapper:focus-within {
+  border-color: #0a84ff;
+  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.2);
+}
+
+.ios-search-icon {
+  color: var(--text-tertiary);
+  font-size: 14px;
+  margin-inline-end: 8px;
+  flex-shrink: 0;
+}
+
+.ios-search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: var(--text-primary);
+  width: 100%;
+  font-family: inherit;
+}
+
+.ios-search-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.ios-search-clear {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  padding: 4px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+  margin-inline-start: 4px;
+}
+
+.ios-search-clear:hover {
+  color: var(--text-primary);
+}
+
+/* iOS Filter Pills */
+.ios-filter-pills {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 2px 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbar on Chrome/Safari/Webkit */
+.ios-filter-pills::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar on Firefox/IE */
+.ios-filter-pills {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.ios-filter-pill {
+  flex-shrink: 0;
+  background: var(--section-bg);
+  border: 1px solid var(--section-border);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+}
+
+.ios-filter-pill:hover {
+  background: var(--item-bg-hover);
+  color: var(--text-primary);
+}
+
+.ios-filter-pill.active {
+  background: #007aff !important;
+  border-color: #007aff !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.25);
+}
+
+.subscription-page.is-dark .ios-filter-pill.active {
+  background: #0a84ff !important;
+  border-color: #0a84ff !important;
+  box-shadow: 0 4px 12px rgba(10, 132, 255, 0.3);
+}
+
+/* iOS Empty Filter State */
+.ios-empty-filter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  text-align: center;
+  background: var(--section-bg);
+  border: 1px dashed var(--section-border);
+  border-radius: 18px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 4px;
+  animation: iosFadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Iridescent Card Border (Apple Style) */
+.subscription-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease !important;
+}
+
+.subscription-card:hover {
+  border-color: transparent !important;
+  background: linear-gradient(var(--card-bg), var(--card-bg)) padding-box,
+              linear-gradient(135deg, rgba(59, 130, 246, 0.35), rgba(168, 85, 247, 0.25), rgba(236, 72, 153, 0.35)) border-box !important;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55), 0 0 20px rgba(168, 85, 247, 0.1) !important;
+  transform: translateY(-2px);
+}
+
+.subscription-page:not(.is-dark) .subscription-card:hover {
+  background: linear-gradient(var(--card-bg), var(--card-bg)) padding-box,
+              linear-gradient(135deg, rgba(0, 122, 255, 0.3), rgba(52, 199, 89, 0.2), rgba(0, 122, 255, 0.3)) border-box !important;
+  box-shadow: 0 25px 55px rgba(0, 0, 0, 0.1), 0 0 15px rgba(0, 122, 255, 0.08) !important;
+}
+
+.subscription-page.is-grid-tech .subscription-card:hover {
+  background: linear-gradient(var(--card-bg), var(--card-bg)) padding-box,
+              linear-gradient(135deg, rgba(0, 255, 102, 0.4), rgba(0, 242, 254, 0.3), rgba(0, 255, 102, 0.4)) border-box !important;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.75), 
+              0 0 30px rgba(0, 255, 102, 0.15),
+              inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Metric Box Glow & Animations */
+.ios-metric-box {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+              background 0.3s ease, 
+              box-shadow 0.3s ease !important;
+}
+
+.ios-metric-box:hover {
+  transform: translateY(-5px) scale(1.03) !important;
+  background: var(--item-bg-hover) !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25), 
+              inset 0 1px 0 rgba(255, 255, 255, 0.1),
+              0 0 15px rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Light sweep effect */
+.ios-metric-box::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-25deg);
+  pointer-events: none;
+}
+
+.ios-metric-box:hover::after {
+  left: 150%;
+  transition: left 0.8s ease-in-out;
+}
+
+/* Icon glows on hover */
+.ios-metric-box:hover .ios-metric-icon.status-active { box-shadow: 0 0 12px rgba(52, 199, 89, 0.6); }
+.ios-metric-box:hover .ios-metric-icon.status-inactive { box-shadow: 0 0 12px rgba(255, 59, 48, 0.6); }
+.ios-metric-box:hover .ios-metric-icon.status-unlimited { box-shadow: 0 0 12px rgba(175, 82, 222, 0.6); }
+.ios-metric-box:hover .ios-metric-icon.expiry { box-shadow: 0 0 12px rgba(88, 86, 214, 0.6); }
+.ios-metric-box:hover .ios-metric-icon.download { box-shadow: 0 0 12px rgba(52, 199, 89, 0.6); }
+.ios-metric-box:hover .ios-metric-icon.upload { box-shadow: 0 0 12px rgba(0, 122, 255, 0.6); }
+.ios-metric-box:hover .ios-metric-icon.online { box-shadow: 0 0 12px rgba(48, 176, 199, 0.6); }
+
+/* Ensure the icon scales beautifully */
+.ios-metric-box:hover .ios-metric-icon {
+  transform: scale(1.15) rotate(5deg) !important;
+}
+
+/* Animated Parallax Waves */
+.company-header {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+  padding: 32px 20px 24px 20px !important;
+  background: rgba(255, 255, 255, 0.015) !important;
+  border: 1px solid var(--section-border) !important;
+}
+
+.subscription-page:not(.is-dark) .company-header {
+  background: rgba(0, 0, 0, 0.01) !important;
+}
+
+.header-waves {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.waves-svg {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.parallax > use {
+  animation: move-forever 20s cubic-bezier(.55,.5,.45,.5) infinite;
+}
+
+.parallax > use:nth-child(1) {
+  animation-delay: -2s;
+  animation-duration: 7s;
+  fill: rgba(255, 255, 255, 0.06);
+}
+
+.parallax > use:nth-child(2) {
+  animation-delay: -3s;
+  animation-duration: 10s;
+  fill: rgba(255, 255, 255, 0.04);
+}
+
+.parallax > use:nth-child(3) {
+  animation-delay: -4s;
+  animation-duration: 13s;
+  fill: rgba(255, 255, 255, 0.02);
+}
+
+.parallax > use:nth-child(4) {
+  animation-delay: -5s;
+  animation-duration: 20s;
+  fill: rgba(255, 255, 255, 0.01);
+}
+
+@keyframes move-forever {
+  0% { transform: translate3d(-90px, 0, 0); }
+  100% { transform: translate3d(85px, 0, 0); }
+}
+
+/* Theme overrides for waves */
+.subscription-page:not(.is-dark) .parallax > use:nth-child(1) { fill: rgba(0, 122, 255, 0.06); }
+.subscription-page:not(.is-dark) .parallax > use:nth-child(2) { fill: rgba(0, 122, 255, 0.04); }
+.subscription-page:not(.is-dark) .parallax > use:nth-child(3) { fill: rgba(0, 122, 255, 0.02); }
+.subscription-page:not(.is-dark) .parallax > use:nth-child(4) { fill: rgba(0, 122, 255, 0.01); }
+
+.subscription-page.is-grid-tech .parallax > use:nth-child(1) { fill: rgba(0, 255, 102, 0.08); }
+.subscription-page.is-grid-tech .parallax > use:nth-child(2) { fill: rgba(0, 242, 254, 0.06); }
+.subscription-page.is-grid-tech .parallax > use:nth-child(3) { fill: rgba(0, 255, 102, 0.04); }
+.subscription-page.is-grid-tech .parallax > use:nth-child(4) { fill: rgba(0, 242, 254, 0.02); }
+
+/* Ensure logo and text are above waves */
+.company-logo,
+.company-title,
+.ios-profile-card,
+.company-socials {
+  position: relative;
+  z-index: 1;
+}
+
+/* Glassmorphism Popovers */
+.glass-qr-popover .ant-popover-inner,
+.glass-menu-popover .ant-popover-inner {
+  background: rgba(20, 24, 39, 0.72) !important;
+  backdrop-filter: blur(20px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  border-radius: 20px !important;
+  padding: 16px !important;
+}
+
+.glass-qr-popover .ant-popover-arrow::after,
+.glass-menu-popover .ant-popover-arrow::after {
+  background: rgba(20, 24, 39, 0.72) !important;
+}
+
+/* Light mode Popovers */
+.glass-qr-popover.light .ant-popover-inner,
+.glass-menu-popover.light .ant-popover-inner {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+
+.glass-qr-popover.light .ant-popover-arrow::after,
+.glass-menu-popover.light .ant-popover-arrow::after {
+  background: rgba(255, 255, 255, 0.75) !important;
+}
+
+/* Cyber Neon Mode Popovers */
+.glass-qr-popover.is-grid-tech .ant-popover-inner,
+.glass-menu-popover.is-grid-tech .ant-popover-inner {
+  background: rgba(10, 15, 24, 0.8) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(0, 255, 102, 0.25) !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), 0 0 20px rgba(0, 255, 102, 0.1) !important;
+}
+
+.glass-qr-popover.is-grid-tech .ant-popover-arrow::after,
+.glass-menu-popover.is-grid-tech .ant-popover-arrow::after {
+  background: rgba(10, 15, 24, 0.8) !important;
+}
+
+/* Frosted Viewport Scrollbars */
+.subscription-page::-webkit-scrollbar {
+  width: 8px;
+}
+
+.subscription-page::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.subscription-page::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.subscription-page::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.subscription-page:not(.is-dark)::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.subscription-page:not(.is-dark)::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.subscription-page.is-grid-tech::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 102, 0.22);
+}
+
+.subscription-page.is-grid-tech::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 255, 102, 0.42);
+}
+
+/* "Grid-Tech" Theme Styles */
+.subscription-page.is-grid-tech {
+  --page-bg: #06090e; /* Cyber Deep Charcoal/Blue */
+  --card-bg: rgba(10, 15, 24, 0.75);
+  --card-border: rgba(0, 255, 102, 0.15);
+  --card-shadow: 0 35px 80px rgba(0, 0, 0, 0.75), 
+                 inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                 0 0 25px rgba(0, 255, 102, 0.03);
+  --section-bg: rgba(0, 255, 102, 0.02);
+  --section-border: rgba(0, 255, 102, 0.1);
+  --item-bg-hover: rgba(0, 255, 102, 0.08);
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-tertiary: rgba(255, 255, 255, 0.4);
+  --separator: rgba(0, 255, 102, 0.12);
+  
+  --bg-radial-1: rgba(0, 255, 102, 0.08);   /* Tech Green */
+  --bg-radial-2: rgba(0, 242, 254, 0.06);   /* Tech Cyan */
+  --bg-radial-3: rgba(59, 130, 246, 0.04);   /* Tech Blue */
+  
+  /* Tech Grid Overlay */
+  background-image: 
+    linear-gradient(rgba(0, 255, 102, 0.02) 1.2px, transparent 1.2px),
+    linear-gradient(90deg, rgba(0, 255, 102, 0.02) 1.2px, transparent 1.2px) !important;
+  background-size: 24px 24px !important;
+  background-position: center !important;
+}
+
+/* Card corner tech brackets */
+.subscription-page.is-grid-tech .subscription-card {
+  position: relative;
+}
+
+.subscription-page.is-grid-tech .subscription-card::before {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 14px;
+  height: 14px;
+  border-top: 2px solid rgba(0, 255, 102, 0.5);
+  border-left: 2px solid rgba(0, 255, 102, 0.5);
+  pointer-events: none;
+}
+
+.subscription-page.is-grid-tech .subscription-card::after {
+  content: '';
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 14px;
+  height: 14px;
+  border-top: 2px solid rgba(0, 255, 102, 0.5);
+  border-right: 2px solid rgba(0, 255, 102, 0.5);
+  pointer-events: none;
+}
+
+/* Monospace fonts for numbers and code tags */
+.subscription-page.is-grid-tech .ios-metric-value,
+.subscription-page.is-grid-tech .ios-order-badge,
+.subscription-page.is-grid-tech .ios-row-title,
+.subscription-page.is-grid-tech .ios-floating-support,
+.subscription-page.is-grid-tech .ios-accordion-header span,
+.subscription-page.is-grid-tech .company-title {
+  font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace !important;
+  letter-spacing: -0.5px;
+}
+
+/* Grid-Tech specific UI details */
+.subscription-page.is-grid-tech .ios-profile-avatar {
+  background: linear-gradient(135deg, #00ff66, #0088cc) !important;
+  box-shadow: 0 4px 15px rgba(0, 255, 102, 0.25) !important;
+  border-radius: 8px !important; /* Tech hard-square avatar */
+}
+
+.subscription-page.is-grid-tech .ios-profile-avatar-container .ios-profile-status-badge {
+  border-color: #06090e !important;
+  box-shadow: 0 0 6px #00ff66 !important;
+  border-radius: 0 !important; /* square status indicator */
+  background-color: #00ff66 !important;
+}
+
+.subscription-page.is-grid-tech .ios-profile-username {
+  color: #00f2fe !important;
+}
+
+.subscription-page.is-grid-tech .ios-search-wrapper:focus-within {
+  border-color: #00ff66 !important;
+  box-shadow: 0 0 0 3px rgba(0, 255, 102, 0.2) !important;
+}
+
+.subscription-page.is-grid-tech .ios-filter-pill.active {
+  background: #00ff66 !important;
+  border-color: #00ff66 !important;
+  color: #06090e !important; /* dark text for high contrast */
+  box-shadow: 0 4px 12px rgba(0, 255, 102, 0.35) !important;
+}
+
+.subscription-page.is-grid-tech .company-title {
+  background: linear-gradient(135deg, #ffffff 20%, #00ff66 60%, #00f2fe) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+.subscription-page.is-grid-tech .ios-action-pill:hover {
+  border-color: #00ff66 !important;
+  color: #00ff66 !important;
+  box-shadow: 0 8px 24px rgba(0, 255, 102, 0.2) !important;
+}
+
+.subscription-page.is-grid-tech .status-dot.active {
+  background-color: #00ff66 !important;
+  box-shadow: 0 0 10px #00ff66 !important;
+}
+
+.subscription-page.is-grid-tech .ios-floating-support {
+  background: linear-gradient(135deg, #00ff66, #0088cc) !important;
+  box-shadow: 0 10px 25px rgba(0, 255, 102, 0.3) !important;
+  border-radius: 12px !important; /* Squarish floating button */
+}
+
+.subscription-page.is-grid-tech .ios-floating-support::before {
+  border-color: #00ff66 !important;
+  border-radius: 12px !important;
+}
+
+/* Tech-styled metric glow icons */
+.subscription-page.is-grid-tech .ios-metric-icon.status-active {
+  background: rgba(0, 255, 102, 0.12) !important;
+  color: #00ff66 !important;
+}
+
+.subscription-page.is-grid-tech .ios-metric-icon.download {
+  background: rgba(0, 255, 102, 0.12) !important;
+  color: #00ff66 !important;
+}
+
