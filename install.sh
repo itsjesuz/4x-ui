@@ -871,25 +871,13 @@ prompt_and_setup_ssl() {
 
 install_netfly_bot() {
     echo ""
-    echo -e "${green}═══════════════════════════════════════════${plain}"
-    echo -e "${green}     NetFly Telegram Bot Installation      ${plain}"
-    echo -e "${green}═══════════════════════════════════════════${plain}"
-    
-    local bot_dir="/usr/local/4x-ui/bot"
-    local temp_clone="/tmp/4x-ui-clone"
-    
-    # Save existing .env if it exists and has content
-    local temp_env="/tmp/netfly-bot.env"
-    rm -f "${temp_env}"
-    local has_existing_env=false
-    if [[ -f "${bot_dir}/.env" ]]; then
-        local current_tok=$(grep -E "^BOT_TOKEN=" "${bot_dir}/.env" | cut -d'=' -f2-)
-        if [[ -n "$current_tok" ]]; then
-            cp "${bot_dir}/.env" "${temp_env}"
-            has_existing_env=true
-        fi
-    fi
+    echo -e "${green}═══════════════════════════════════════════════════════════${plain}"
+    echo -e "${green}         NetFly Telegram Bot Installation                  ${plain}"
+    echo -e "${green}═══════════════════════════════════════════════════════════${plain}"
 
+    local bot_dir="/opt/netfly"
+
+    # ── Ask whether to install at all ────────────────────────────────────
     local install_bot=""
     if [ "$FAST_BOT_UPDATE" = "true" ]; then
         install_bot="y"
@@ -897,47 +885,50 @@ install_netfly_bot() {
         read -rp "Do you want to install/update the NetFly Telegram Bot? [y/N]: " install_bot
         install_bot="${install_bot:-n}"
     fi
-    
+
     if [[ ! "$install_bot" =~ ^[yY]$ ]]; then
         echo -e "${yellow}Skipping Telegram Bot installation.${plain}"
         return
     fi
-    
-    echo -e "${yellow}Installing dependencies (python3, pip, venv, git)...${plain}"
-    case "${release}" in
-        ubuntu | debian | armbian)
-            apt-get update -y
-            apt-get install -y python3 python3-pip python3-venv git
-            ;;
-        centos | rhel | almalinux | rockylinux | fedora)
-            dnf install -y python3 python3-pip git || yum install -y python3 python3-pip git
-            ;;
-        arch | manjaro | parch)
-            pacman -Sy --noconfirm python python-pip git
-            ;;
-        alpine)
-            apk add --no-cache python3 py3-pip git
-            ;;
-        *)
-            echo -e "${red}Unsupported OS for automatic package installation. Please make sure python3 and git are installed manually.${plain}"
-            ;;
-    esac
-    
-    echo -e "${yellow}Cloning repository to get bot source code...${plain}"
-    rm -rf "${temp_clone}"
-    git clone https://github.com/itsjesuz/4x-ui.git "${temp_clone}"
-    if [[ $? -ne 0 ]]; then
-        echo -e "${red}Failed to clone repository from GitHub.${plain}"
-        return
+
+    # ── Save existing .env if present ────────────────────────────────────
+    local temp_env="/tmp/netfly-bot.env"
+    rm -f "${temp_env}"
+    local has_existing_env=false
+    if [[ -f "${bot_dir}/.env" ]]; then
+        local current_tok
+        current_tok=$(grep -E "^BOT_TOKEN=" "${bot_dir}/.env" 2>/dev/null | cut -d'=' -f2-)
+        if [[ -n "$current_tok" && "$current_tok" != *"your_token"* ]]; then
+            cp "${bot_dir}/.env" "${temp_env}"
+            has_existing_env=true
+        fi
     fi
-    
-    echo -e "${yellow}Setting up bot directory...${plain}"
-    mkdir -p "/usr/local/4x-ui"
-    rm -rf "${bot_dir}"
-    cp -r "${temp_clone}/bot" "${bot_dir}"
-    rm -rf "${temp_clone}"
-    
-    # Restore existing .env if saved
+
+    # ── Download compiled binary from GitHub Releases ─────────────────────
+    echo ""
+    echo -e "${yellow}Fetching latest NetFly bot release...${plain}"
+    local bot_tag_version
+    bot_tag_version=$(curl -s "https://api.github.com/repos/itsjesuz/4x-ui/releases/latest" \
+        | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+    if [[ -z "$bot_tag_version" ]]; then
+        echo -e "${red}Failed to fetch latest release version from GitHub.${plain}"
+        return 1
+    fi
+    echo -e "${green}Latest version: ${bot_tag_version}${plain}"
+
+    mkdir -p "${bot_dir}"
+    local binary_url="https://github.com/itsjesuz/4x-ui/releases/download/${bot_tag_version}/netfly_bot"
+    echo -e "${yellow}Downloading netfly_bot binary...${plain}"
+    curl -4fLo "${bot_dir}/netfly_bot" "${binary_url}"
+    if [[ $? -ne 0 ]]; then
+        echo -e "${red}Failed to download netfly_bot binary. Check your internet connection.${plain}"
+        rm -rf "${bot_dir}"
+        return 1
+    fi
+    chmod +x "${bot_dir}/netfly_bot"
+    echo -e "${green}✓ Binary downloaded successfully.${plain}"
+
+    # ── Configure .env ─────────────────────────────────────────────────────
     local reuse_existing=false
     if [ "$has_existing_env" = true ] && [ -f "${temp_env}" ]; then
         if [ "$FAST_BOT_UPDATE" = "true" ]; then
@@ -945,7 +936,7 @@ install_netfly_bot() {
         else
             echo ""
             echo -e "${yellow}An existing bot configuration (.env) was found.${plain}"
-            read -rp "Do you want to reuse this configuration? [Y/n]: " reuse_opt
+            read -rp "Reuse the existing configuration? [Y/n]: " reuse_opt
             reuse_opt="${reuse_opt:-y}"
             if [[ "$reuse_opt" =~ ^[yY]$ ]]; then
                 reuse_existing=true
@@ -959,63 +950,175 @@ install_netfly_bot() {
         rm -f "${temp_env}"
     else
         echo ""
-        echo -e "${green}Configuring bot variables (.env)...${plain}"
+        echo -e "${green}── Bot Configuration ─────────────────────────────────────────${plain}"
+        echo -e "${yellow}You will need your Bot Token from @BotFather and your Telegram${plain}"
+        echo -e "${yellow}user ID (get it from @userinfobot).${plain}"
+        echo ""
+
         local bot_token=""
         while [[ -z "$bot_token" ]]; do
-            read -rp "Enter Telegram Bot Token (from @BotFather): " bot_token
+            read -rp "  Enter Telegram Bot Token (from @BotFather): " bot_token
+            bot_token="${bot_token// /}"
         done
-        
+
         local admin_ids=""
         while [[ -z "$admin_ids" ]]; do
-            read -rp "Enter Admin Telegram User IDs (comma-separated, e.g. 12345678,9876543): " admin_ids
+            read -rp "  Enter Admin Telegram User ID(s) (comma-separated): " admin_ids
+            admin_ids="${admin_ids// /}"
         done
-        
-        read -rp "Enter Required Channel ID (optional - for sponsor join gate, e.g. -10012345678): " required_channel
-        
-        read -rp "Enter Database Path [default: netfly.db]: " db_path
-        db_path="${db_path:-netfly.db}"
-        
-        cp "${bot_dir}/.env.example" "${bot_dir}/.env"
-        sed -i "s|^BOT_TOKEN=.*|BOT_TOKEN=${bot_token}|" "${bot_dir}/.env"
-        sed -i "s|^ADMIN_IDS=.*|ADMIN_IDS=${admin_ids}|" "${bot_dir}/.env"
-        if [[ -n "$required_channel" ]]; then
-            if ! grep -q "^REQUIRED_CHANNEL_ID=" "${bot_dir}/.env"; then
-                echo "REQUIRED_CHANNEL_ID=${required_channel}" >> "${bot_dir}/.env"
-            else
-                sed -i "s|^REQUIRED_CHANNEL_ID=.*|REQUIRED_CHANNEL_ID=${required_channel}|" "${bot_dir}/.env"
-            fi
+
+        local required_channel=""
+        read -rp "  Enter Required Channel ID (optional, press Enter to skip): " required_channel
+        required_channel="${required_channel// /}"
+
+        local db_path="netfly.db"
+        read -rp "  Enter database filename [default: netfly.db]: " db_path_input
+        if [[ -n "$db_path_input" ]]; then
+            db_path="${db_path_input// /}"
         fi
-        
-        sed -i "s|^DB_PATH=.*|DB_PATH=${db_path}|" "${bot_dir}/.env"
+
+        # Write .env file
+        {
+            echo "BOT_TOKEN=${bot_token}"
+            echo "ADMIN_IDS=${admin_ids}"
+            echo "DB_PATH=${db_path}"
+            [[ -n "$required_channel" ]] && echo "REQUIRED_CHANNEL_ID=${required_channel}"
+        } > "${bot_dir}/.env"
+        chmod 600 "${bot_dir}/.env"
         rm -f "${temp_env}"
+        echo -e "${green}✓ Configuration saved to ${bot_dir}/.env${plain}"
     fi
-    
-    echo -e "${yellow}Creating virtual environment and installing python dependencies...${plain}"
-    python3 -m venv "${bot_dir}/venv"
-    if [[ $? -ne 0 ]]; then
-        echo -e "${red}Failed to create Python virtual environment.${plain}"
-        return
+
+    # ── Retrieve Machine ID + Bot Username from the binary ────────────────
+    echo ""
+    echo -e "${yellow}Connecting to Telegram to verify bot token and collect identity...${plain}"
+    local id_output
+    id_output=$(cd "${bot_dir}" && ./netfly_bot --get-machine-id 2>/dev/null)
+    local id_rc=$?
+
+    if [[ $id_rc -ne 0 || -z "$id_output" ]]; then
+        echo -e "${red}Failed to connect to Telegram.${plain}"
+        echo -e "${yellow}Please check:${plain}"
+        echo -e "  • The bot token is correct (re-check with @BotFather)"
+        echo -e "  • The server has outbound internet access"
+        rm -f "${bot_dir}/netfly_bot" "${bot_dir}/.env"
+        return 1
     fi
-    
-    "${bot_dir}/venv/bin/pip" install --upgrade pip
-    "${bot_dir}/venv/bin/pip" install -r "${bot_dir}/requirements.txt"
-    if [[ $? -ne 0 ]]; then
-        echo -e "${red}Failed to install Python requirements.${plain}"
-        return
+
+    local machine_id
+    machine_id=$(echo "$id_output" | sed -n '1p')
+    local bot_username
+    bot_username=$(echo "$id_output" | sed -n '2p')
+    echo -e "${green}✓ Bot verified: @${bot_username}${plain}"
+
+
+    local license_key_valid=false
+
+
+
+    # ── On fast updates, reuse existing license if still valid ────────────
+    if [ "$FAST_BOT_UPDATE" = "true" ] && [[ -f "${bot_dir}/license.key" ]]; then
+        echo -e "${yellow}Checking existing license key...${plain}"
+        if (cd "${bot_dir}" && ./netfly_bot --verify-license "${bot_username}" 2>/dev/null); then
+            echo -e "${green}✓ Existing license key is still valid. Skipping re-purchase.${plain}"
+            license_key_valid=true
+        else
+            echo -e "${yellow}⚠ Existing license key failed verification (expired or machine changed).${plain}"
+            echo -e "${yellow}  Please obtain a new key from ${blue}@webnsz${yellow}.${plain}"
+            rm -f "${bot_dir}/license.key"
+        fi
     fi
-    
-    echo -e "${yellow}Installing systemd service for NetFly Bot...${plain}"
+
+    # ── Prompt for license key if not yet valid ───────────────────────────
+    if [ "$license_key_valid" = false ]; then
+        echo ""
+        echo -e "${green}═══════════════════════════════════════════════════════════${plain}"
+        echo -e "${green}         NetFly Bot — License Key Required                 ${plain}"
+        echo -e "${green}═══════════════════════════════════════════════════════════${plain}"
+        echo ""
+        echo -e "  ${yellow}Send the following details to the seller to receive your key:${plain}"
+        echo ""
+        echo -e "  Bot Username  :  ${blue}@${bot_username}${plain}"
+        echo -e "  Machine ID    :  ${blue}${machine_id}${plain}"
+        echo ""
+        echo -e "  ${green}Contact the seller on Telegram:${plain}"
+        echo -e "  ${blue}  ➜  @webnsz${plain}"
+        echo ""
+        echo -e "${yellow}  A valid license key is required to proceed.${plain}"
+        echo -e "${yellow}  The bot will NOT be installed without a valid key.${plain}"
+        echo ""
+        echo -e "${green}═══════════════════════════════════════════════════════════${plain}"
+        echo ""
+
+        local attempt
+        for attempt in 1 2 3; do
+            local lic_key=""
+            read -rp "  Paste license key (attempt ${attempt}/3): " lic_key
+            lic_key="${lic_key//[[:space:]]/}"   # strip ALL whitespace/newlines
+
+            if [[ -z "$lic_key" ]]; then
+                echo -e "  ${red}✗ No key entered. A valid license key is required.${plain}"
+                echo ""
+                continue
+            fi
+
+            echo "$lic_key" > "${bot_dir}/license.key"
+            chmod 600 "${bot_dir}/license.key"
+
+            if (cd "${bot_dir}" && ./netfly_bot --verify-license "${bot_username}" 2>/dev/null); then
+                echo -e "  ${green}✓ License key accepted!${plain}"
+                license_key_valid=true
+                break
+            else
+                local verify_err
+                verify_err=$(cd "${bot_dir}" && ./netfly_bot --verify-license "${bot_username}" 2>&1 || true)
+                echo -e "  ${red}✗ License key rejected.${plain}"
+                [[ -n "$verify_err" ]] && echo -e "    ${yellow}Reason: ${verify_err}${plain}"
+                echo ""
+                rm -f "${bot_dir}/license.key"
+            fi
+        done
+    fi
+
+
+    if [ "$license_key_valid" = false ]; then
+        echo ""
+        echo -e "${red}═══════════════════════════════════════════════════════════${plain}"
+        echo -e "${red}  License verification failed — bot will NOT be installed.  ${plain}"
+        echo -e "${red}═══════════════════════════════════════════════════════════${plain}"
+        echo ""
+        echo -e "${yellow}Contact ${blue}@webnsz${yellow} on Telegram with the details below:${plain}"
+        echo -e "  Bot Username : @${bot_username}"
+        echo -e "  Machine ID   : ${machine_id}"
+        echo ""
+        # Clean up — leave no partial install
+        rm -f "${bot_dir}/netfly_bot" "${bot_dir}/.env" "${bot_dir}/license.key"
+        return 1
+    fi
+
+    # ── Install systemd service ────────────────────────────────────────────
+    echo ""
+    echo -e "${yellow}Installing systemd service...${plain}"
     cat > /etc/systemd/system/netfly-bot.service << EOF
 [Unit]
-Description=NetFly Telegram Bot Service
-After=network.target
+Description=NetFly Telegram Bot
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 Type=simple
 User=root
 WorkingDirectory=${bot_dir}
-ExecStart=${bot_dir}/venv/bin/python bot.py
+EnvironmentFile=${bot_dir}/.env
+ExecStart=${bot_dir}/netfly_bot
 Restart=on-failure
+RestartSec=5s
+StandardOutput=journal
+StandardError=journal
+NoNewPrivileges=true
+ProtectSystem=full
+PrivateTmp=true
+ReadWritePaths=${bot_dir}
 
 [Install]
 WantedBy=multi-user.target
@@ -1023,15 +1126,31 @@ EOF
 
     systemctl daemon-reload
     systemctl enable netfly-bot
-    systemctl restart netfly-bot
-    
-    if [[ $(systemctl is-active netfly-bot) == "active" ]]; then
-        echo -e "${green}✓ NetFly Telegram Bot has been successfully installed and started!${plain}"
-        echo -e "You can manage it with: ${yellow}systemctl restart/status/stop netfly-bot${plain}"
+    systemctl start netfly-bot
+
+    sleep 2
+    if [[ "$(systemctl is-active netfly-bot 2>/dev/null)" == "active" ]]; then
+        echo ""
+        echo -e "${green}═══════════════════════════════════════════════════════════${plain}"
+        echo -e "${green}  ✓ NetFly Bot installed and running!                      ${plain}"
+        echo -e "${green}═══════════════════════════════════════════════════════════${plain}"
+        echo -e "  Bot     : ${blue}@${bot_username}${plain}"
+        echo -e "  Dir     : ${bot_dir}"
+        echo -e "  Service : netfly-bot"
+        echo ""
+        echo -e "  Manage the bot:"
+        echo -e "    ${yellow}systemctl status  netfly-bot${plain}"
+        echo -e "    ${yellow}systemctl restart netfly-bot${plain}"
+        echo -e "    ${yellow}systemctl stop    netfly-bot${plain}"
+        echo -e "    ${yellow}journalctl -u netfly-bot -f${plain}  (live logs)"
+        echo ""
     else
-        echo -e "${red}NetFly Bot service was installed but failed to start. Please check status with: systemctl status netfly-bot${plain}"
+        echo -e "${red}NetFly Bot service was installed but failed to start.${plain}"
+        echo -e "  Run: ${yellow}systemctl status netfly-bot${plain}"
+        echo -e "  Run: ${yellow}journalctl -u netfly-bot -n 50${plain}"
     fi
 }
+
 
 config_after_install() {
     local existing_hasDefaultCredential=$(${xui_folder}/x-ui setting -show true | grep -Eo 'hasDefaultCredential: .+' | awk '{print $2}')
