@@ -55,12 +55,17 @@ export interface AllSetting {
   subJsonURI: string;
   subKeyFile: string;
   subListen: string;
+  subPageBot: string;
+  subPageChannel: string;
+  subPageLogo: string;
+  subPageName: string;
   subPath: string;
   subPort: number;
   subProfileUrl: string;
   subRoutingRules: string;
   subShowInfo: boolean;
   subSupportUrl: string;
+  subThemeDir: string;
   subTitle: string;
   subURI: string;
   subUpdates: number;
@@ -79,6 +84,7 @@ export interface AllSetting {
   trustedProxyCIDRs: string;
   twoFactorEnable: boolean;
   twoFactorToken: string;
+  warpUpdateInterval: number;
   webBasePath: string;
   webCertFile: string;
   webDomain: string;
@@ -143,12 +149,17 @@ export interface AllSettingView {
   subJsonURI: string;
   subKeyFile: string;
   subListen: string;
+  subPageBot: string;
+  subPageChannel: string;
+  subPageLogo: string;
+  subPageName: string;
   subPath: string;
   subPort: number;
   subProfileUrl: string;
   subRoutingRules: string;
   subShowInfo: boolean;
   subSupportUrl: string;
+  subThemeDir: string;
   subTitle: string;
   subURI: string;
   subUpdates: number;
@@ -167,6 +178,7 @@ export interface AllSettingView {
   trustedProxyCIDRs: string;
   twoFactorEnable: boolean;
   twoFactorToken: string;
+  warpUpdateInterval: number;
   webBasePath: string;
   webCertFile: string;
   webDomain: string;
@@ -239,11 +251,6 @@ export interface ClientRecord {
   totalGB: number;
   updatedAt: number;
   uuid: string;
-  telegramUsername?: string;
-  telegramFirstName?: string;
-  telegramLastName?: string;
-  telegramId?: number;
-  orderNumber?: string;
 }
 
 export interface ClientReverse {

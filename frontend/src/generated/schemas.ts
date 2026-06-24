@@ -191,6 +191,18 @@ export const SCHEMAS: Record<string, unknown> = {
         "description": "Subscription server listen IP",
         "type": "string"
       },
+      "subPageBot": {
+        "type": "string"
+      },
+      "subPageChannel": {
+        "type": "string"
+      },
+      "subPageLogo": {
+        "type": "string"
+      },
+      "subPageName": {
+        "type": "string"
+      },
       "subPath": {
         "description": "Base path for subscription URLs",
         "type": "string"
@@ -381,6 +393,10 @@ export const SCHEMAS: Record<string, unknown> = {
       "subJsonURI",
       "subKeyFile",
       "subListen",
+      "subPageBot",
+      "subPageChannel",
+      "subPageLogo",
+      "subPageName",
       "subPath",
       "subPort",
       "subProfileUrl",
@@ -625,6 +641,18 @@ export const SCHEMAS: Record<string, unknown> = {
         "description": "Subscription server listen IP",
         "type": "string"
       },
+      "subPageBot": {
+        "type": "string"
+      },
+      "subPageChannel": {
+        "type": "string"
+      },
+      "subPageLogo": {
+        "type": "string"
+      },
+      "subPageName": {
+        "type": "string"
+      },
       "subPath": {
         "description": "Base path for subscription URLs",
         "type": "string"
@@ -821,6 +849,10 @@ export const SCHEMAS: Record<string, unknown> = {
       "subJsonURI",
       "subKeyFile",
       "subListen",
+      "subPageBot",
+      "subPageChannel",
+      "subPageLogo",
+      "subPageName",
       "subPath",
       "subPort",
       "subProfileUrl",

@@ -116,8 +116,8 @@ export default function NodesPage() {
       } else {
         setSyncFetchError(msg?.msg || t('pages.nodes.syncUnsyncedFetchError'));
       }
-    } catch (e: any) {
-      setSyncFetchError(e?.message || t('pages.nodes.syncUnsyncedFetchError'));
+    } catch (e: unknown) {
+      setSyncFetchError((e instanceof Error ? e.message : undefined) || t('pages.nodes.syncUnsyncedFetchError'));
     } finally {
       setSyncLoading(false);
     }
@@ -135,8 +135,8 @@ export default function NodesPage() {
       } else {
         messageApi.error(msg?.msg || t('pages.nodes.toasts.syncFailed'));
       }
-    } catch (e: any) {
-      messageApi.error(e?.message || t('pages.nodes.toasts.syncFailed'));
+    } catch (e: unknown) {
+      messageApi.error((e instanceof Error ? e.message : undefined) || t('pages.nodes.toasts.syncFailed'));
     } finally {
       setSyncLoading(false);
     }
