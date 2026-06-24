@@ -991,7 +991,24 @@ try:
     exp = data.get('expires_at')
     if exp:
         exp_dt = datetime.datetime.fromisoformat(exp)
-        exp_str = exp_dt.strftime('%Y-%m-%d %H:%M UTC')
+        now = datetime.datetime.now(datetime.timezone.utc)
+        diff = exp_dt - now
+        if diff.total_seconds() <= 0:
+            exp_str = 'Expired'
+        else:
+            days = diff.days
+            hours, remainder = divmod(diff.seconds, 3600)
+            minutes, seconds = divmod(remainder, 60)
+            parts = []
+            if days > 0:
+                parts.append(f'{days}d')
+            if hours > 0 or days > 0:
+                parts.append(f'{hours}h')
+            if minutes > 0 or hours > 0 or days > 0:
+                parts.append(f'{minutes}m')
+            parts.append(f'{seconds}s')
+            remaining = ' '.join(parts)
+            exp_str = f\"{exp_dt.strftime('%Y-%m-%d %H:%M UTC')} ({remaining} remaining)\"
     else:
         exp_str = 'Lifetime (No Expiry)'
         
