@@ -908,7 +908,7 @@ install_netfly_bot() {
     echo ""
     echo -e "${yellow}Fetching latest NetFly bot release...${plain}"
     local bot_tag_version
-    bot_tag_version=$(curl -s "https://api.github.com/repos/itsjesuz/4x-ui/releases/latest" \
+    bot_tag_version=$(curl -s "https://api.github.com/repos/itsjesuz/netfly-releases/releases/latest" \
         | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
     if [[ -z "$bot_tag_version" ]]; then
         echo -e "${red}Failed to fetch latest release version from GitHub.${plain}"
@@ -917,7 +917,7 @@ install_netfly_bot() {
     echo -e "${green}Latest version: ${bot_tag_version}${plain}"
 
     mkdir -p "${bot_dir}"
-    local binary_url="https://github.com/itsjesuz/4x-ui/releases/download/${bot_tag_version}/netfly_bot"
+    local binary_url="https://github.com/itsjesuz/netfly-releases/releases/download/${bot_tag_version}/netfly_bot"
     echo -e "${yellow}Downloading netfly_bot binary...${plain}"
     curl -4fLo "${bot_dir}/netfly_bot" "${binary_url}"
     if [[ $? -ne 0 ]]; then
