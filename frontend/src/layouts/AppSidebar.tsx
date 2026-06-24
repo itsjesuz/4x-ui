@@ -63,13 +63,53 @@ function readCollapsed(): boolean {
   }
 }
 
+/** NetFly logo mark — a stylised "N" in a rounded square */
+function LogoMark({ size = 28 }: { size?: number }) {
+  return (
+    <svg
+      className="sidebar-logo-mark"
+      width={size}
+      height={size}
+      viewBox="0 0 28 28"
+      fill="none"
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id="logo-grad" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#00f2fe" />
+          <stop offset="100%" stopColor="#4776e6" />
+        </linearGradient>
+        <linearGradient id="logo-grad-light" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#3b82f6" />
+          <stop offset="100%" stopColor="#1d4ed8" />
+        </linearGradient>
+      </defs>
+      <rect width="28" height="28" rx="7" fill="url(#logo-grad)" opacity="0.15" />
+      <rect width="28" height="28" rx="7" fill="none" stroke="url(#logo-grad)" strokeWidth="1" opacity="0.4" />
+      <path
+        d="M8 20V8l8 9V8"
+        stroke="url(#logo-grad)"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M16 8v12"
+        stroke="url(#logo-grad)"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 function DonateButton({ ariaLabel }: { ariaLabel: string }) {
   return (
     <a
       href={DONATE_URL}
       target="_blank"
       rel="noopener noreferrer"
-      className="sidebar-donate"
+      className="sidebar-action-btn sidebar-donate"
       aria-label={ariaLabel}
       title={ariaLabel}
     >
@@ -108,7 +148,7 @@ function ThemeCycleButton({ id, isDark, isUltra, onCycle, ariaLabel }: {
     <button
       id={id}
       type="button"
-      className="sidebar-theme-cycle"
+      className="sidebar-action-btn sidebar-theme-cycle"
       aria-label={ariaLabel}
       title={ariaLabel}
       onClick={onCycle}
@@ -237,15 +277,21 @@ export default function AppSidebar() {
     <div className="ant-sidebar">
       <Layout.Sider
         theme={currentTheme}
-        width={220}
+        width={230}
         collapsible
         collapsed={collapsed}
         breakpoint="md"
         onCollapse={onSiderCollapse}
       >
+        {/* Ambient glow orbs */}
+        <div className="sider-glow-top" aria-hidden="true" />
+        <div className="sider-glow-bottom" aria-hidden="true" />
+
+        {/* Brand header */}
         <div className={`sider-brand${collapsed ? ' sider-brand-collapsed' : ''}`}>
           <div className="brand-block">
-            <span className="brand-text">{collapsed ? '3X' : '4X-UI'}</span>
+            <LogoMark size={collapsed ? 26 : 28} />
+            {!collapsed && <span className="brand-text">NetFly</span>}
           </div>
           {!collapsed && (
             <div className="brand-actions">
@@ -260,6 +306,15 @@ export default function AppSidebar() {
             </div>
           )}
         </div>
+
+        {/* Navigation section label */}
+        {!collapsed && (
+          <div className="sider-section-label" aria-hidden="true">
+            Navigation
+          </div>
+        )}
+
+        {/* Main nav */}
         <Menu
           theme={currentTheme}
           mode="inline"
@@ -270,6 +325,8 @@ export default function AppSidebar() {
           items={toMenuItems(navItems)}
           onClick={onMenuClick}
         />
+
+        {/* Utility section */}
         <Menu
           theme={currentTheme}
           mode="inline"
@@ -278,11 +335,14 @@ export default function AppSidebar() {
           items={toMenuItems(utilItems)}
           onClick={onMenuClick}
         />
+
+        {/* Footer */}
         <div className="sider-footer">
           <VersionBadge version={panelVersion} collapsed={collapsed} />
         </div>
       </Layout.Sider>
 
+      {/* Mobile drawer */}
       <Drawer
         placement="left"
         closable={false}
@@ -298,7 +358,8 @@ export default function AppSidebar() {
       >
         <div className="drawer-header">
           <div className="brand-block">
-            <span className="drawer-brand">4X-UI</span>
+            <LogoMark size={26} />
+            <span className="drawer-brand">NetFly</span>
           </div>
           <div className="drawer-header-actions">
             <DonateButton ariaLabel={t('menu.donate') || 'Donate'} />
@@ -310,7 +371,7 @@ export default function AppSidebar() {
               ariaLabel={t('menu.theme')}
             />
             <button
-              className="drawer-close"
+              className="sidebar-action-btn drawer-close"
               type="button"
               aria-label={t('close')}
               onClick={() => setDrawerOpen(false)}

@@ -1,32 +1,104 @@
-/* Ultra Beautiful Glassmorphism Sidebar */
+/* ==========================================================================
+   Ultra Beautiful Glassmorphism Sidebar
+   ========================================================================== */
 
 .ant-sidebar > .ant-layout-sider {
   position: sticky;
   top: 0;
   height: 100vh;
   align-self: flex-start;
-  background: linear-gradient(180deg, rgba(21, 22, 26, 0.85) 0%, rgba(13, 14, 18, 0.92) 100%) !important;
+  background: linear-gradient(180deg, rgba(12, 13, 18, 0.92) 0%, rgba(8, 9, 12, 0.96) 100%) !important;
   backdrop-filter: blur(30px) saturate(160%) !important;
   -webkit-backdrop-filter: blur(30px) saturate(160%) !important;
   border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
-  transition: all 0.2s ease !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  overflow: hidden;
 }
 
+/* Subtle SVG Noise overlay for texture */
+.ant-sidebar > .ant-layout-sider::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.015;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Theme Variant: Light Mode */
 body:not(.dark) .ant-sidebar > .ant-layout-sider {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(245, 246, 250, 0.92) 100%) !important;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.88) 0%, rgba(245, 246, 250, 0.94) 100%) !important;
   border-right: 1px solid rgba(0, 0, 0, 0.04) !important;
 }
 
-/* Brand Logo Styling */
+/* Theme Variant: Ultra Dark Mode */
+html[data-theme="ultra-dark"] .ant-sidebar > .ant-layout-sider {
+  background: linear-gradient(180deg, rgba(5, 5, 7, 0.96) 0%, rgba(2, 2, 3, 0.98) 100%) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.02) !important;
+}
+
+/* ==========================================================================
+   Ambient Glow Orbs
+   ========================================================================== */
+
+.sider-glow-top {
+  position: absolute;
+  top: -60px;
+  left: -60px;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.14) 0%, rgba(59, 130, 246, 0) 70%);
+  filter: blur(25px);
+  pointer-events: none;
+  z-index: 0;
+  transition: background 0.3s ease;
+}
+
+.sider-glow-bottom {
+  position: absolute;
+  bottom: -60px;
+  right: -60px;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0) 70%);
+  filter: blur(25px);
+  pointer-events: none;
+  z-index: 0;
+  transition: background 0.3s ease;
+}
+
+body:not(.dark) .sider-glow-top {
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.07) 0%, rgba(59, 130, 246, 0) 70%);
+}
+
+body:not(.dark) .sider-glow-bottom {
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.05) 0%, rgba(139, 92, 246, 0) 70%);
+}
+
+html[data-theme="ultra-dark"] .sider-glow-top {
+  background: radial-gradient(circle, rgba(0, 242, 254, 0.12) 0%, rgba(0, 242, 254, 0) 70%);
+}
+
+html[data-theme="ultra-dark"] .sider-glow-bottom {
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, rgba(139, 92, 246, 0) 70%);
+}
+
+/* ==========================================================================
+   Brand Header
+   ========================================================================== */
+
 .sider-brand {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 22px 20px 18px 24px;
+  padding: 24px 20px 20px 24px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
   user-select: none;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 body:not(.dark) .sider-brand {
@@ -35,9 +107,7 @@ body:not(.dark) .sider-brand {
 
 .sider-brand-collapsed {
   justify-content: center;
-  font-size: 16px;
-  padding: 18px 4px;
-  letter-spacing: 0;
+  padding: 20px 4px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 }
 
@@ -45,14 +115,47 @@ body:not(.dark) .sider-brand-collapsed {
   border-bottom: 1px solid rgba(0, 0, 0, 0.03);
 }
 
+.brand-block {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  line-height: 1.1;
+}
+
+.sidebar-logo-mark {
+  display: inline-block;
+  vertical-align: middle;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  filter: drop-shadow(0 0 8px rgba(0, 242, 254, 0.25));
+}
+
+.sider-brand:hover .sidebar-logo-mark {
+  transform: rotate(6deg) scale(1.05);
+  filter: drop-shadow(0 0 12px rgba(0, 242, 254, 0.5));
+}
+
+body:not(.dark) .sidebar-logo-mark {
+  filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.15));
+}
+
+body:not(.dark) .sidebar-logo-mark path,
+body:not(.dark) .sidebar-logo-mark rect {
+  stroke: url(#logo-grad-light) !important;
+}
+
+body:not(.dark) .sidebar-logo-mark rect[fill*="logo-grad"] {
+  fill: url(#logo-grad-light) !important;
+}
+
 .brand-text {
   font-weight: 800;
   font-size: 20px;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 10px rgba(0, 242, 254, 0.25));
+  filter: drop-shadow(0 2px 10px rgba(0, 242, 254, 0.15));
 }
 
 body:not(.dark) .brand-text {
@@ -62,17 +165,6 @@ body:not(.dark) .brand-text {
   filter: none;
 }
 
-.sider-brand-collapsed .brand-text {
-  font-size: 16px;
-}
-
-.brand-block {
-  display: inline-flex;
-  align-items: center;
-  min-width: 0;
-  line-height: 1.1;
-}
-
 .brand-actions {
   display: inline-flex;
   align-items: center;
@@ -80,9 +172,11 @@ body:not(.dark) .brand-text {
   flex-shrink: 0;
 }
 
-/* Donate & Theme buttons */
-.sidebar-donate,
-.sidebar-theme-cycle {
+/* ==========================================================================
+   Action Buttons (Donate, Theme, Close)
+   ========================================================================== */
+
+.sidebar-action-btn {
   background: rgba(255, 255, 255, 0.03) !important;
   border: 1px solid rgba(255, 255, 255, 0.05) !important;
   width: 32px;
@@ -91,17 +185,20 @@ body:not(.dark) .brand-text {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--ant-color-text-secondary);
+  color: var(--ant-color-text-secondary) !important;
   text-decoration: none;
   flex-shrink: 0;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-body:not(.dark) .sidebar-donate,
-body:not(.dark) .sidebar-theme-cycle {
+body:not(.dark) .sidebar-action-btn {
   background: rgba(0, 0, 0, 0.02) !important;
   border: 1px solid rgba(0, 0, 0, 0.04) !important;
+}
+
+.sidebar-action-btn:hover {
+  transform: translateY(-2px) scale(1.05);
 }
 
 .sidebar-donate:hover,
@@ -109,7 +206,6 @@ body:not(.dark) .sidebar-theme-cycle {
   background-color: rgba(236, 72, 153, 0.1) !important;
   border-color: rgba(236, 72, 153, 0.25) !important;
   color: #ec4899 !important;
-  transform: translateY(-2px) scale(1.05);
 }
 
 .sidebar-theme-cycle:hover,
@@ -117,22 +213,53 @@ body:not(.dark) .sidebar-theme-cycle {
   background-color: rgba(59, 130, 246, 0.1) !important;
   border-color: rgba(59, 130, 246, 0.25) !important;
   color: var(--ant-color-primary) !important;
-  transform: translateY(-2px) scale(1.05);
 }
 
-/* Sidebar navigation */
+.drawer-close:hover,
+.drawer-close:focus-visible {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+  border-color: rgba(239, 68, 68, 0.25) !important;
+  color: #ef4444 !important;
+}
+
+/* ==========================================================================
+   Section Labels & Layout Structure
+   ========================================================================== */
+
+.sider-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.25);
+  padding: 18px 24px 6px;
+  user-select: none;
+  position: relative;
+  z-index: 2;
+}
+
+body:not(.dark) .sider-section-label {
+  color: rgba(0, 0, 0, 0.35);
+}
+
 .ant-sidebar > .ant-layout-sider .ant-layout-sider-children {
   display: flex;
   flex-direction: column;
   height: 100%;
+  position: relative;
+  z-index: 2;
 }
+
+/* ==========================================================================
+   Menus & Items
+   ========================================================================== */
 
 .sider-nav {
   flex: 1 1 auto;
   overflow-y: auto;
   overflow-x: hidden;
   min-height: 0;
-  padding: 12px 0 !important;
+  padding: 6px 0 !important;
   background: transparent !important;
   border: none !important;
 }
@@ -165,16 +292,16 @@ body:not(.dark) .sider-utility {
   border-top: 1px solid rgba(0, 0, 0, 0.03) !important;
 }
 
-/* Floating Capsule Menu Item Styling */
+/* Floating Capsule Styling */
 .sider-nav .ant-menu-item,
 .sider-utility .ant-menu-item,
 .sider-nav .ant-menu-submenu-title {
-  height: 44px !important;
-  line-height: 44px !important;
-  margin: 4px 12px !important;
+  height: 48px !important;
+  line-height: 48px !important;
+  margin: 6px 12px !important;
   width: calc(100% - 24px) !important;
   border-radius: 10px !important;
-  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
   color: var(--ant-color-text-secondary) !important;
   background: transparent !important;
 }
@@ -183,7 +310,7 @@ body:not(.dark) .sider-utility {
 .sider-nav .ant-menu-item .ant-menu-title-content,
 .sider-utility .ant-menu-item .ant-menu-item-icon,
 .sider-utility .ant-menu-item .ant-menu-title-content {
-  transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Submenu Styling */
@@ -207,41 +334,41 @@ body:not(.dark) .sider-nav .ant-menu-submenu-open > .ant-menu-submenu-title {
 }
 
 .sider-nav .ant-menu-sub .ant-menu-item {
-  height: 38px !important;
-  line-height: 38px !important;
-  margin: 2px 12px 2px 24px !important;
+  height: 40px !important;
+  line-height: 40px !important;
+  margin: 4px 12px 4px 24px !important;
   width: calc(100% - 36px) !important;
   font-size: 13px !important;
 }
 
-/* Hover State - Shifting translation */
+/* Hover State - Smooth highlight with micro-translate */
 .sider-nav .ant-menu-item:not(.ant-menu-item-selected):not(.ant-menu-item-disabled):hover,
 .sider-utility .ant-menu-item:not(.ant-menu-item-selected):not(.ant-menu-item-disabled):hover,
 .sider-nav .ant-menu-submenu-title:hover {
-  background-color: rgba(255, 255, 255, 0.03) !important;
+  background-color: rgba(255, 255, 255, 0.04) !important;
   color: var(--ant-color-text) !important;
 }
 
 body:not(.dark) .sider-nav .ant-menu-item:not(.ant-menu-item-selected):not(.ant-menu-item-disabled):hover,
 body:not(.dark) .sider-utility .ant-menu-item:not(.ant-menu-item-selected):not(.ant-menu-item-disabled):hover,
 body:not(.dark) .sider-nav .ant-menu-submenu-title:hover {
-  background-color: rgba(0, 0, 0, 0.02) !important;
+  background-color: rgba(0, 0, 0, 0.025) !important;
+  color: var(--ant-color-text) !important;
 }
 
-/* Micro-Translate Icon & Text on Hover */
 .sider-nav .ant-menu-item:not(.ant-menu-item-selected):not(.ant-menu-item-disabled):hover .ant-menu-item-icon,
 .sider-nav .ant-menu-item:not(.ant-menu-item-selected):not(.ant-menu-item-disabled):hover .ant-menu-title-content,
 .sider-utility .ant-menu-item:not(.ant-menu-item-selected):not(.ant-menu-item-disabled):hover .ant-menu-item-icon,
 .sider-utility .ant-menu-item:not(.ant-menu-item-selected):not(.ant-menu-item-disabled):hover .ant-menu-title-content,
 .sider-nav .ant-menu-submenu-title:hover .ant-menu-item-icon,
 .sider-nav .ant-menu-submenu-title:hover .ant-menu-title-content {
-  transform: translateX(4px);
+  transform: translateX(3px);
 }
 
-/* Selected Active State with Left Neon Accent */
+/* Active State - Gradient capsule with neon left edge */
 .sider-nav .ant-menu-item-selected,
 .sider-utility .ant-menu-item-selected {
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.12) 0%, rgba(59, 130, 246, 0.02) 100%) !important;
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.01) 100%) !important;
   color: var(--ant-color-primary) !important;
   font-weight: 600 !important;
   box-shadow: inset 3px 0 0 0 var(--ant-color-primary) !important;
@@ -252,14 +379,27 @@ body:not(.dark) .sider-utility .ant-menu-item-selected {
   background: linear-gradient(90deg, rgba(59, 130, 246, 0.08) 0%, rgba(59, 130, 246, 0.01) 100%) !important;
 }
 
-/* Footer & Version Badge Redesign */
+/* Active Styling in Ultra Dark Mode */
+html[data-theme="ultra-dark"] .sider-nav .ant-menu-item-selected,
+html[data-theme="ultra-dark"] .sider-utility .ant-menu-item-selected {
+  background: linear-gradient(90deg, rgba(0, 242, 254, 0.12) 0%, rgba(0, 242, 254, 0.01) 100%) !important;
+  box-shadow: inset 3px 0 0 0 #00f2fe !important;
+  color: #00f2fe !important;
+}
+
+/* ==========================================================================
+   Footer & Version Badge
+   ========================================================================== */
+
 .sider-footer {
   flex: 0 0 auto;
-  padding: 12px;
+  padding: 16px;
   display: flex;
   justify-content: center;
   align-items: center;
   border-top: 1px solid rgba(255, 255, 255, 0.03);
+  position: relative;
+  z-index: 2;
 }
 
 body:not(.dark) .sider-footer {
@@ -281,7 +421,9 @@ body:not(.dark) .sider-footer {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 20px;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 body:not(.dark) .sider-version {
@@ -289,21 +431,57 @@ body:not(.dark) .sider-version {
   border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
+/* Shimmer overlay effect on hover */
+.sider-version::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-25deg);
+  transition: none;
+}
+
+body:not(.dark) .sider-version::after {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+.sider-version:hover::after {
+  left: 150%;
+  transition: left 0.85s ease-in-out;
+}
+
 .sider-version:hover,
 .sider-version:focus-visible {
   color: var(--ant-color-primary);
   background: rgba(59, 130, 246, 0.08);
-  border-color: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.25);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08);
   outline: none;
 }
 
 .sider-version.is-collapsed {
-  padding: 6px;
+  padding: 8px;
   border-radius: 50%;
   aspect-ratio: 1;
 }
+
+/* ==========================================================================
+   Mobile responsiveness & Drawer Styling
+   ========================================================================== */
 
 /* Mobile Handle Button */
 .drawer-handle {
@@ -332,7 +510,7 @@ body:not(.dark) .sider-version {
   transform: scale(1.05);
 }
 
-/* Mobile Drawer Styling */
+/* Mobile Drawer Container */
 .drawer-header {
   display: flex;
   align-items: center;
@@ -348,7 +526,7 @@ body:not(.dark) .drawer-header {
 .drawer-brand {
   font-weight: 800;
   font-size: 20px;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -364,36 +542,10 @@ body:not(.dark) .drawer-brand {
   gap: 8px;
 }
 
-.drawer-close {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 14px;
-  color: var(--ant-color-text-secondary);
-  transition: all 0.2s ease;
-}
-
-body:not(.dark) .drawer-close {
-  background: rgba(0, 0, 0, 0.02);
-  border: 1px solid rgba(0, 0, 0, 0.04);
-}
-
-.drawer-close:hover {
-  background: rgba(239, 68, 68, 0.1) !important;
-  border-color: rgba(239, 68, 68, 0.25) !important;
-  color: #ef4444 !important;
-}
-
 .drawer-menu .ant-menu-item {
-  height: 44px !important;
-  line-height: 44px !important;
-  margin: 4px 16px !important;
+  height: 48px !important;
+  line-height: 48px !important;
+  margin: 6px 16px !important;
   width: calc(100% - 32px) !important;
   border-radius: 10px !important;
 }
@@ -420,22 +572,22 @@ body:not(.dark) .drawer-footer {
   border-top: 1px solid rgba(0, 0, 0, 0.03);
 }
 
-/* Drawer Backdrops */
+/* Drawer Backdrops and blur treatment */
 body.dark .ant-drawer-content,
 body.dark .ant-drawer-body {
-  background-color: rgba(21, 22, 26, 0.85) !important;
+  background-color: rgba(12, 13, 18, 0.94) !important;
   backdrop-filter: blur(20px) saturate(140%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(140%) !important;
 }
 
 html[data-theme="ultra-dark"] body.dark .ant-drawer-content,
 html[data-theme="ultra-dark"] body.dark .ant-drawer-body {
-  background-color: rgba(5, 5, 7, 0.9) !important;
+  background-color: rgba(5, 5, 7, 0.98) !important;
 }
 
 body:not(.dark) .ant-drawer-content,
 body:not(.dark) .ant-drawer-body {
-  background-color: rgba(255, 255, 255, 0.85) !important;
+  background-color: rgba(255, 255, 255, 0.9) !important;
   backdrop-filter: blur(20px) saturate(140%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(140%) !important;
 }
@@ -448,6 +600,7 @@ body.dark .ant-drawer-body .drawer-menu .ant-menu-item-group-list {
   background-color: transparent !important;
 }
 
+/* Hide triggers on mobile */
 @media (max-width: 768px) {
   .drawer-handle {
     display: inline-flex;
