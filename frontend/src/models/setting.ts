@@ -61,6 +61,10 @@ export class AllSetting {
   subJsonRules = '';
   subJsonFinalMask = '';
   subThemeDir = '';
+  subPageName = '';
+  subPageLogo = '';
+  subPageChannel = '';
+  subPageBot = '';
 
   timeLocation = 'Local';
 

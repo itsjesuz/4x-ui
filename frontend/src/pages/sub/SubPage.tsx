@@ -43,7 +43,7 @@ import { setMessageInstance } from '@/utils/messageBus';
 import { pauseAnimationsUntilLeave, useTheme } from '@/hooks/useTheme';
 import SubUsageSummary from './SubUsageSummary';
 import './SubPage.css';
-import logoUrl from '@/assets/netfly-logo.png';
+import defaultLogoUrl from '@/assets/netfly-logo.png';
 
 const QR_SIZE = 240;
 
@@ -157,6 +157,12 @@ function getProtocolBadgeClass(protocol: string) {
 }
 
 const subData = window.__SUB_PAGE_DATA__ || {};
+
+const subPageName = subData.subPageName || 'NetFly | نتفلای';
+const subPageLogo = subData.subPageLogo || '';
+const logoUrl = subPageLogo || defaultLogoUrl;
+const subPageChannel = subData.subPageChannel || 'netflyco';
+const subPageBot = subData.subPageBot || 'inetflybot';
 
 const sId = subData.sId || '';
 const enabled = !!subData.enabled;
@@ -455,8 +461,8 @@ export default function SubPage() {
                       </g>
                     </svg>
                   </div>
-                  <img src={logoUrl} alt="NetFly Logo" className="company-logo" />
-                  <h1 className="company-title">NetFly | نتفلای</h1>
+                  <img src={logoUrl} alt={subPageName} className="company-logo" />
+                  <h1 className="company-title">{subPageName}</h1>
                   
                   {/* Telegram Bot User Profile Card */}
                   {(telegramFirstName || telegramUsername) && (
@@ -489,12 +495,16 @@ export default function SubPage() {
                   )}
 
                   <div className="company-socials">
-                    <a href="https://t.me/inetflybot" target="_blank" rel="noopener noreferrer">
-                      <Button size="small" className="social-btn" icon={<SendOutlined />}>@inetflybot</Button>
-                    </a>
-                    <a href="https://t.me/netflyco" target="_blank" rel="noopener noreferrer">
-                      <Button size="small" className="social-btn" icon={<SendOutlined />}>@netflyco</Button>
-                    </a>
+                    {subPageBot && (
+                      <a href={`https://t.me/${subPageBot}`} target="_blank" rel="noopener noreferrer">
+                        <Button size="small" className="social-btn" icon={<SendOutlined />}>@{subPageBot}</Button>
+                      </a>
+                    )}
+                    {subPageChannel && (
+                      <a href={`https://t.me/${subPageChannel}`} target="_blank" rel="noopener noreferrer">
+                        <Button size="small" className="social-btn" icon={<SendOutlined />}>@{subPageChannel}</Button>
+                      </a>
+                    )}
                   </div>
                 </div>
 

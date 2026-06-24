@@ -185,6 +185,22 @@ export default function SubscriptionGeneralTab({ allSetting, updateSetting }: Su
               <Input value={allSetting.subThemeDir} placeholder="/etc/4x-ui/sub_templates/my-theme/"
                 onChange={(e) => updateSetting({ subThemeDir: e.target.value })} />
             </SettingListItem>
+            <SettingListItem paddings="small" title={t('pages.settings.subPageName')} description={t('pages.settings.subPageNameDesc')}>
+              <Input value={allSetting.subPageName} placeholder="NetFly | نتفلای"
+                onChange={(e) => updateSetting({ subPageName: e.target.value })} />
+            </SettingListItem>
+            <SettingListItem paddings="small" title={t('pages.settings.subPageLogo')} description={t('pages.settings.subPageLogoDesc')}>
+              <Input value={allSetting.subPageLogo} placeholder="https://example.com/logo.png"
+                onChange={(e) => updateSetting({ subPageLogo: e.target.value })} />
+            </SettingListItem>
+            <SettingListItem paddings="small" title={t('pages.settings.subPageChannel')} description={t('pages.settings.subPageChannelDesc')}>
+              <Input value={allSetting.subPageChannel} placeholder="netflyco"
+                onChange={(e) => updateSetting({ subPageChannel: e.target.value })} />
+            </SettingListItem>
+            <SettingListItem paddings="small" title={t('pages.settings.subPageBot')} description={t('pages.settings.subPageBotDesc')}>
+              <Input value={allSetting.subPageBot} placeholder="inetflybot"
+                onChange={(e) => updateSetting({ subPageBot: e.target.value })} />
+            </SettingListItem>
           </>
         ),
       },

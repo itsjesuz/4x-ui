@@ -62,6 +62,7 @@ export default function IndexPage() {
   const { status, fetched, fetchError, refresh } = useStatusQuery();
   const { isMobile } = useMediaQuery();
   const [messageApi, messageContextHolder] = message.useMessage();
+  const [modal, modalContextHolder] = Modal.useModal();
   useEffect(() => { setMessageInstance(messageApi); }, [messageApi]);
 
   const [accessLogEnable, setAccessLogEnable] = useState(false);
@@ -127,8 +128,28 @@ export default function IndexPage() {
   }
 
   function openTelegram() {
-    window.open('https://t.me/XrayUI', '_blank', 'noopener,noreferrer');
+    window.open('https://t.me/Netflyco', '_blank', 'noopener,noreferrer');
   }
+
+  const updateTelegramBot = useCallback(() => {
+    modal.confirm({
+      title: 'Update Telegram Bot',
+      content: 'Are you sure you want to update the NetFly Telegram Bot to the latest version?',
+      okText: t('confirm'),
+      cancelText: t('cancel'),
+      onOk: async () => {
+        setBusy({ busy: true, tip: 'Updating Telegram Bot... Please wait.' });
+        try {
+          const result = await HttpUtil.post('/panel/api/server/updateBot');
+          if (result?.success) {
+            messageApi.success('Telegram Bot update started successfully!');
+          }
+        } finally {
+          setBusy({ busy: false });
+        }
+      },
+    });
+  }, [modal, t, setBusy, messageApi]);
 
   async function openConfig() {
     setLoading(true);
@@ -156,6 +177,7 @@ export default function IndexPage() {
   return (
     <ConfigProvider theme={antdThemeConfig}>
       {messageContextHolder}
+      {modalContextHolder}
       <Layout className={pageClass}>
         <AppSidebar />
 
@@ -221,7 +243,7 @@ export default function IndexPage() {
                       title={
                         <Space>
                           <span>4X-UI</span>
-                          {isMobile && displayVersion && (
+                          {displayVersion && (
                             <Tag color={panelUpdateInfo.updateAvailable ? 'orange' : 'green'}>
                               {panelUpdateInfo.updateAvailable
                                 ? `v${panelUpdateInfo.latestVersion}`
@@ -231,36 +253,54 @@ export default function IndexPage() {
                         </Space>
                       }
                       hoverable
-                      actions={[
-                        <Space className="action" key="tg" onClick={openTelegram}>
-                          <svg
-                            viewBox="0 0 24 24"
-                            width="14"
-                            height="14"
-                            fill="currentColor"
-                            className="tg-icon"
-                            aria-hidden="true"
+                    >
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '4px 0' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontWeight: '500' }}>Telegram Channel</span>
+                          <Space onClick={openTelegram} style={{ cursor: 'pointer', color: '#1890ff' }}>
+                            <svg
+                              viewBox="0 0 24 24"
+                              width="14"
+                              height="14"
+                              fill="currentColor"
+                              className="tg-icon"
+                              aria-hidden="true"
+                            >
+                              <path d="M21.93 4.34a1.5 1.5 0 0 0-2.05-1.6L2.97 9.6c-.92.36-.91 1.66.02 1.99l4.32 1.53 1.7 5.23a1 1 0 0 0 1.68.36l2.43-2.43 4.36 3.21a1.5 1.5 0 0 0 2.36-.91l3.09-13.86a1.5 1.5 0 0 0 0-.38ZM9.97 14.66l-.55 3.36-1.36-4.2 9.8-7.05-7.89 7.89Z" />
+                            </svg>
+                            <span>@Netflyco</span>
+                          </Space>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontWeight: '500' }}>Panel Version</span>
+                          <Space>
+                            {panelUpdateInfo.updateAvailable ? (
+                              <Button
+                                type="primary"
+                                size="small"
+                                icon={<CloudDownloadOutlined />}
+                                onClick={openPanelVersion}
+                              >
+                                {t('update')} v{panelUpdateInfo.latestVersion}
+                              </Button>
+                            ) : (
+                              <Tag color="green">v{displayVersion} (Up to date)</Tag>
+                            )}
+                          </Space>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontWeight: '500' }}>Telegram Bot</span>
+                          <Button
+                            type="default"
+                            size="small"
+                            icon={<CloudDownloadOutlined />}
+                            onClick={updateTelegramBot}
                           >
-                            <path d="M21.93 4.34a1.5 1.5 0 0 0-2.05-1.6L2.97 9.6c-.92.36-.91 1.66.02 1.99l4.32 1.53 1.7 5.23a1 1 0 0 0 1.68.36l2.43-2.43 4.36 3.21a1.5 1.5 0 0 0 2.36-.91l3.09-13.86a1.5 1.5 0 0 0 0-.38ZM9.97 14.66l-.55 3.36-1.36-4.2 9.8-7.05-7.89 7.89Z" />
-                          </svg>
-                          {!isMobile && <span>@XrayUI</span>}
-                        </Space>,
-                        <Space
-                          key="panel-version"
-                          className={`action ${panelUpdateInfo.updateAvailable ? 'action-update' : ''}`}
-                          onClick={openPanelVersion}
-                        >
-                          <CloudDownloadOutlined />
-                          {!isMobile && (
-                            <span>
-                              {panelUpdateInfo.updateAvailable
-                                ? `${t('update')} ${panelUpdateInfo.latestVersion}`
-                                : `v${displayVersion}`}
-                            </span>
-                          )}
-                        </Space>,
-                      ]}
-                    />
+                            Update Bot
+                          </Button>
+                        </div>
+                      </div>
+                    </Card>
                   </Col>
 
                   <Col xs={24} lg={12}>

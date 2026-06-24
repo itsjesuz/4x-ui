@@ -201,6 +201,11 @@ func (a *SUBController) serveSubPage(c *gin.Context, basePath string, page PageD
 		datepicker = "gregorian"
 	}
 
+	subPageName, _ := a.settingService.GetSubPageName()
+	subPageLogo, _ := a.settingService.GetSubPageLogo()
+	subPageChannel, _ := a.settingService.GetSubPageChannel()
+	subPageBot, _ := a.settingService.GetSubPageBot()
+
 	subData := map[string]any{
 		"sId":               page.SId,
 		"enabled":           page.Enabled,
@@ -225,6 +230,10 @@ func (a *SUBController) serveSubPage(c *gin.Context, basePath string, page PageD
 		"telegramFirstName": page.TelegramFirstName,
 		"telegramLastName":  page.TelegramLastName,
 		"orderNumber":       page.OrderNumber,
+		"subPageName":       subPageName,
+		"subPageLogo":       subPageLogo,
+		"subPageChannel":    subPageChannel,
+		"subPageBot":        subPageBot,
 	}
 	subDataJSON, err := json.Marshal(subData)
 	if err != nil {

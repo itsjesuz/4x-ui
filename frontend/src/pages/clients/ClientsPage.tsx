@@ -379,6 +379,14 @@ export default function ClientsPage() {
   // order, so we just hand it through.
   const sortedClients = filteredClients;
 
+  function trafficLabel(row: ClientRecord) {
+    const used = (row.traffic?.up || 0) + (row.traffic?.down || 0);
+    const total = row.totalGB || 0;
+    const formattedUsed = SizeFormatter.sizeFormat(used);
+    const formattedTotal = total > 0 ? SizeFormatter.sizeFormat(total) : '∞';
+    return `${formattedUsed} / ${formattedTotal}`;
+  }
+
   function remainingLabel(row: ClientRecord) {
     const total = row.totalGB || 0;
     if (total <= 0) return '∞';

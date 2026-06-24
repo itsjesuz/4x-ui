@@ -69,6 +69,7 @@ func (a *ServerController) initRouter(g *gin.RouterGroup) {
 	g.POST("/restartXrayService", a.restartXrayService)
 	g.POST("/installXray/:version", a.installXray)
 	g.POST("/updatePanel", a.updatePanel)
+	g.POST("/updateBot", a.updateBot)
 	g.POST("/updateGeofile", a.updateGeofile)
 	g.POST("/updateGeofile/:fileName", a.updateGeofile)
 	g.POST("/logs/:count", a.getLogs)
@@ -203,6 +204,12 @@ func (a *ServerController) installXray(c *gin.Context) {
 func (a *ServerController) updatePanel(c *gin.Context) {
 	err := a.panelService.StartUpdate()
 	jsonMsg(c, I18nWeb(c, "pages.index.panelUpdateStartedPopover"), err)
+}
+
+// updateBot starts a bot self-update to the latest release.
+func (a *ServerController) updateBot(c *gin.Context) {
+	err := a.panelService.StartBotUpdate()
+	jsonMsg(c, I18nWeb(c, "pages.index.botUpdateStartedPopover"), err)
 }
 
 // updateGeofile updates the specified geo file for Xray.

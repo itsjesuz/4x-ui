@@ -26,6 +26,10 @@ interface SubPageData {
   telegramLastName?: string;
   telegramId?: string | number;
   orderNumber?: string;
+  subPageName?: string;
+  subPageLogo?: string;
+  subPageChannel?: string;
+  subPageBot?: string;
 }
 
 interface Window {

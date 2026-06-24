@@ -97,6 +97,10 @@ var defaultValueMap = map[string]string{
 	"restartXrayOnClientDisable":  "true",
 	"xrayOutboundTestUrl":         "https://www.google.com/generate_204",
 	"panelOutbound":               "",
+	"subPageName":                 "NetFly | نتفلای",
+	"subPageLogo":                 "",
+	"subPageChannel":              "netflyco",
+	"subPageBot":                  "inetflybot",
 
 	// LDAP defaults
 	"ldapEnable":            "false",
@@ -752,6 +756,22 @@ func (s *SettingService) GetSubJsonFinalMask() (string, error) {
 
 func (s *SettingService) GetSubThemeDir() (string, error) {
 	return s.getString("subThemeDir")
+}
+
+func (s *SettingService) GetSubPageName() (string, error) {
+	return s.getString("subPageName")
+}
+
+func (s *SettingService) GetSubPageLogo() (string, error) {
+	return s.getString("subPageLogo")
+}
+
+func (s *SettingService) GetSubPageChannel() (string, error) {
+	return s.getString("subPageChannel")
+}
+
+func (s *SettingService) GetSubPageBot() (string, error) {
+	return s.getString("subPageBot")
 }
 
 func (s *SettingService) GetDatepicker() (string, error) {

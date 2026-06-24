@@ -89,6 +89,10 @@ type AllSetting struct {
 	SubJsonRules                string `json:"subJsonRules" form:"subJsonRules"`
 	SubJsonFinalMask            string `json:"subJsonFinalMask" form:"subJsonFinalMask"` // JSON subscription global finalmask (tcp/udp masks + quicParams)
 	SubThemeDir                 string `json:"subThemeDir" form:"subThemeDir"`           // Absolute path to a folder containing a custom subscription page template
+	SubPageName                 string `json:"subPageName" form:"subPageName"`
+	SubPageLogo                 string `json:"subPageLogo" form:"subPageLogo"`
+	SubPageChannel              string `json:"subPageChannel" form:"subPageChannel"`
+	SubPageBot                  string `json:"subPageBot" form:"subPageBot"`
 
 	// LDAP settings
 	LdapEnable     bool   `json:"ldapEnable" form:"ldapEnable"`
