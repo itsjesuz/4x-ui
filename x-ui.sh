@@ -1004,6 +1004,62 @@ except Exception:
     fi
 }
 
+change_bot_license() {
+    local bot_dir="/opt/netfly"
+    if [[ ! -f "${bot_dir}/netfly_bot" ]]; then
+        LOGE "NetFly Bot is not installed."
+        return 1
+    fi
+
+    echo -e "${yellow}Fetching bot identity...${plain}"
+    local id_output
+    id_output=$(cd "${bot_dir}" && ./netfly_bot --get-machine-id 2>/dev/null)
+    local machine_id
+    machine_id=$(echo "$id_output" | sed -n '1p')
+    local bot_username
+    bot_username=$(echo "$id_output" | sed -n '2p')
+
+    if [[ -z "$bot_username" || -z "$machine_id" ]]; then
+        LOGE "Failed to retrieve bot identity from Telegram. Check your internet connection or bot token."
+        return 1
+    fi
+
+    echo ""
+    echo -e "${green}═══════════════════════════════════════════════════════════${plain}"
+    echo -e "${green}         NetFly Bot — Update License Key                   ${plain}"
+    echo -e "${green}═══════════════════════════════════════════════════════════${plain}"
+    echo ""
+    echo -e "  Bot Username  :  ${blue}@${bot_username}${plain}"
+    echo -e "  Machine ID    :  ${blue}${machine_id}${plain}"
+    echo ""
+    
+    local new_key
+    read -rp "  Enter new license key: " new_key
+    new_key="${new_key//[[:space:]]/}"
+
+    if [[ -z "$new_key" ]]; then
+        echo -e "  ${red}✗ No key entered. Aborting.${plain}"
+        return 1
+    fi
+
+    local temp_lic="${bot_dir}/license.key.tmp"
+    echo "$new_key" > "$temp_lic"
+    chmod 600 "$temp_lic"
+
+    if (cd "${bot_dir}" && LICENSE_KEY_FILE="license.key.tmp" ./netfly_bot --verify-license "${bot_username}" 2>/dev/null); then
+        mv "$temp_lic" "${bot_dir}/license.key"
+        chmod 600 "${bot_dir}/license.key"
+        systemctl restart netfly-bot
+        echo -e "  ${green}✓ License key updated successfully and bot restarted!${plain}"
+    else
+        local verify_err
+        verify_err=$(cd "${bot_dir}" && LICENSE_KEY_FILE="license.key.tmp" ./netfly_bot --verify-license "${bot_username}" 2>&1 || true)
+        echo -e "  ${red}✗ License verification failed. Keeping original license.${plain}"
+        [[ -n "$verify_err" ]] && echo -e "    ${yellow}Reason: ${verify_err}${plain}"
+        rm -f "$temp_lic"
+    fi
+}
+
 firewall_menu() {
     echo -e "${green}\t1.${plain} ${green}Install${plain} Firewall"
     echo -e "${green}\t2.${plain} Port List [numbered]"
@@ -3123,6 +3179,7 @@ show_usage() {
 │  ${blue}x-ui bot-stop${plain}              - Stop NetFly Bot                  │
 │  ${blue}x-ui bot-restart${plain}           - Restart NetFly Bot               │
 │  ${blue}x-ui bot-log${plain}               - Check NetFly Bot logs            │
+│  ${blue}x-ui bot-license${plain}           - Change NetFly Bot license key    │
 └────────────────────────────────────────────────────────────────┘"
 }
 
@@ -3170,10 +3227,11 @@ show_menu() {
 │  ${green}30.${plain} Restart NetFly Bot                        │
 │  ${green}31.${plain} Check NetFly Bot Logs                     │
 │  ${green}32.${plain} Update NetFly Bot                         │
+│  ${green}33.${plain} Change Bot License Key                    │
 ╚────────────────────────────────────────────────╝
 "
     show_status
-    echo && read -rp "Please enter your selection [0-32]: " num
+    echo && read -rp "Please enter your selection [0-33]: " num
 
     case "${num}" in
         0)
@@ -3275,8 +3333,11 @@ show_menu() {
         32)
             FAST_BOT_UPDATE=true bash <(curl -Ls https://raw.githubusercontent.com/itsjesuz/4x-ui/main/install.sh)
             ;;
+        33)
+            change_bot_license
+            ;;
         *)
-            LOGE "Please enter the correct number [0-32]"
+            LOGE "Please enter the correct number [0-33]"
             ;;
     esac
 }
@@ -3342,6 +3403,9 @@ if [[ $# > 0 ]]; then
             ;;
         "bot-log")
             journalctl -u netfly-bot -n 50 --no-pager
+            ;;
+        "bot-license")
+            change_bot_license
             ;;
         *) show_usage ;;
     esac
