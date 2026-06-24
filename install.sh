@@ -993,24 +993,19 @@ install_netfly_bot() {
     echo ""
     echo -e "${yellow}Connecting to Telegram to verify bot token and collect identity...${plain}"
     local id_output
-    local id_err_file="/tmp/netfly-id-err.log"
-    rm -f "$id_err_file"
-    id_output=$(cd "${bot_dir}" && ./netfly_bot --get-machine-id 2>"$id_err_file")
+    # Run the bot binary to verify and get identity. Stderr is not redirected
+    # so any traceback or OS execution error will print directly to the user's terminal.
+    id_output=$(cd "${bot_dir}" && ./netfly_bot --get-machine-id)
     local id_rc=$?
 
     if [[ $id_rc -ne 0 || -z "$id_output" ]]; then
         echo -e "${red}Failed to connect to Telegram.${plain}"
-        if [[ -f "$id_err_file" && -s "$id_err_file" ]]; then
-            echo -e "${yellow}Error output from the bot:${plain}"
-            cat "$id_err_file"
-        fi
         echo -e "${yellow}Please check:${plain}"
         echo -e "  • The bot token is correct (re-check with @BotFather)"
         echo -e "  • The server has outbound internet access"
-        rm -f "${bot_dir}/netfly_bot" "${bot_dir}/.env" "$id_err_file"
+        rm -f "${bot_dir}/netfly_bot" "${bot_dir}/.env"
         return 1
     fi
-    rm -f "$id_err_file"
 
     local machine_id
     machine_id=$(echo "$id_output" | sed -n '1p')
