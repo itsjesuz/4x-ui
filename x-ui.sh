@@ -976,6 +976,32 @@ show_bot_status() {
             echo -e "NetFly Bot state: ${yellow}Not Installed${plain}"
         fi
     fi
+
+    if [[ -f "/opt/netfly/license.key" ]]; then
+        echo -e "${yellow}── Bot License Details ──────────────────────────${plain}"
+        python3 -c "
+import base64, json, sys, datetime
+try:
+    with open('/opt/netfly/license.key', 'r') as f:
+        key = f.read().strip()
+    payload = key.split('.')[0]
+    payload += '=' * (-len(payload) % 4)
+    data = json.loads(base64.urlsafe_b64decode(payload).decode('utf-8'))
+    
+    exp = data.get('expires_at')
+    if exp:
+        exp_dt = datetime.datetime.fromisoformat(exp)
+        exp_str = exp_dt.strftime('%Y-%m-%d %H:%M UTC')
+    else:
+        exp_str = 'Lifetime (No Expiry)'
+        
+    print(f\"  Holder      :  {data.get('customer', 'Unknown')}\")
+    print(f\"  Bot Username:  @{data.get('bot_username', 'Unknown')}\")
+    print(f\"  Expires     :  {exp_str}\")
+except Exception:
+    print('  Error reading license key details.')
+"
+    fi
 }
 
 firewall_menu() {
