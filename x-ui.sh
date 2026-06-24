@@ -896,6 +896,7 @@ show_status() {
     esac
     show_xray_status
     show_mtproto_status
+    show_bot_status
 }
 
 show_enable_status() {
@@ -954,6 +955,27 @@ show_mtproto_status() {
             echo -e "mtproto inbound ${id} (${bind}): ${red}Not Running${plain}"
         fi
     done
+}
+
+check_bot_status() {
+    if [[ "$(systemctl is-active netfly-bot 2>/dev/null)" == "active" ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+show_bot_status() {
+    check_bot_status
+    if [[ $? == 0 ]]; then
+        echo -e "NetFly Bot state: ${green}Running${plain}"
+    else
+        if [[ -f "/opt/netfly/netfly_bot" ]]; then
+            echo -e "NetFly Bot state: ${red}Not Running${plain}"
+        else
+            echo -e "NetFly Bot state: ${yellow}Not Installed${plain}"
+        fi
+    fi
 }
 
 firewall_menu() {
@@ -3071,6 +3093,10 @@ show_usage() {
 │  ${blue}x-ui legacy${plain}                - Legacy version                   │
 │  ${blue}x-ui install${plain}               - Install                          │
 │  ${blue}x-ui uninstall${plain}             - Uninstall                        │
+│  ${blue}x-ui bot-start${plain}             - Start NetFly Bot                 │
+│  ${blue}x-ui bot-stop${plain}              - Stop NetFly Bot                  │
+│  ${blue}x-ui bot-restart${plain}           - Restart NetFly Bot               │
+│  ${blue}x-ui bot-log${plain}               - Check NetFly Bot logs            │
 └────────────────────────────────────────────────────────────────┘"
 }
 
@@ -3111,12 +3137,17 @@ show_menu() {
 │  ${green}24.${plain} Enable BBR                                │
 │  ${green}25.${plain} Update Geo Files                          │
 │  ${green}26.${plain} Speedtest by Ookla                        │
-│────────────────────────────────────────────────│
 │  ${green}27.${plain} PostgreSQL Management                     │
+│────────────────────────────────────────────────│
+│  ${green}28.${plain} Start NetFly Bot                          │
+│  ${green}29.${plain} Stop NetFly Bot                           │
+│  ${green}30.${plain} Restart NetFly Bot                        │
+│  ${green}31.${plain} Check NetFly Bot Logs                     │
+│  ${green}32.${plain} Update NetFly Bot                         │
 ╚────────────────────────────────────────────────╝
 "
     show_status
-    echo && read -rp "Please enter your selection [0-27]: " num
+    echo && read -rp "Please enter your selection [0-32]: " num
 
     case "${num}" in
         0)
@@ -3203,8 +3234,23 @@ show_menu() {
         27)
             postgresql_menu
             ;;
+        28)
+            systemctl start netfly-bot && LOGI "NetFly Bot started successfully."
+            ;;
+        29)
+            systemctl stop netfly-bot && LOGI "NetFly Bot stopped successfully."
+            ;;
+        30)
+            systemctl restart netfly-bot && LOGI "NetFly Bot restarted successfully."
+            ;;
+        31)
+            journalctl -u netfly-bot -n 50 --no-pager
+            ;;
+        32)
+            FAST_BOT_UPDATE=true bash <(curl -Ls https://raw.githubusercontent.com/itsjesuz/4x-ui/main/install.sh)
+            ;;
         *)
-            LOGE "Please enter the correct number [0-27]"
+            LOGE "Please enter the correct number [0-32]"
             ;;
     esac
 }
@@ -3258,6 +3304,18 @@ if [[ $# > 0 ]]; then
             ;;
         "migrateDB")
             migrate_db "$2" "$3"
+            ;;
+        "bot-start")
+            systemctl start netfly-bot && echo "NetFly Bot started."
+            ;;
+        "bot-stop")
+            systemctl stop netfly-bot && echo "NetFly Bot stopped."
+            ;;
+        "bot-restart")
+            systemctl restart netfly-bot && echo "NetFly Bot restarted."
+            ;;
+        "bot-log")
+            journalctl -u netfly-bot -n 50 --no-pager
             ;;
         *) show_usage ;;
     esac
