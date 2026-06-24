@@ -891,6 +891,9 @@ install_netfly_bot() {
         return
     fi
 
+    # Stop the running bot service to prevent "Text file busy" error during overwrite
+    systemctl stop netfly-bot 2>/dev/null || true
+
     # ── Save existing .env if present ────────────────────────────────────
     local temp_env="/tmp/netfly-bot.env"
     rm -f "${temp_env}"
