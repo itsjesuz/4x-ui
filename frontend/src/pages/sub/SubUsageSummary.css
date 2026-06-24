@@ -1,0 +1,169 @@
+.usage-summary {
+  margin-top: 4px;
+  margin-bottom: 22px;
+  padding: 16px;
+  background: var(--section-bg);
+  border: 1px solid var(--section-border);
+  border-radius: 18px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s ease;
+}
+
+.usage-summary.is-inactive {
+  opacity: 0.6;
+  border-color: rgba(255, 59, 48, 0.4);
+}
+
+.usage-summary-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.usage-summary-labels {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-family: var(--font-family);
+  font-variant-numeric: tabular-nums;
+  min-width: 0;
+}
+
+.usage-summary-used {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.usage-summary-sep {
+  color: var(--text-tertiary);
+  font-size: 14px;
+  margin: 0 2px;
+}
+
+.usage-summary-total {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.usage-summary-chips {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.usage-summary-chips .ant-tag {
+  margin: 0;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.usage-summary-bar.ant-progress {
+  margin-bottom: 10px;
+}
+
+.usage-summary-bar .ant-progress-outer {
+  padding-inline-end: 0;
+}
+
+.usage-summary-bar .ant-progress-inner {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-radius: 6px !important;
+}
+
+.subscription-page:not(.is-dark) .usage-summary-bar .ant-progress-inner {
+  background: rgba(0, 0, 0, 0.05) !important;
+}
+
+.usage-summary-bar .ant-progress-bg {
+  border-radius: 6px !important;
+  height: 8px !important;
+  box-shadow: 0 0 12px rgba(52, 199, 89, 0.25);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.usage-summary-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  min-height: 16px;
+}
+
+.usage-summary-pct {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.usage-summary:hover {
+  transform: translateY(-2px);
+  background: var(--item-bg-hover);
+}
+
+.usage-summary-circle .ant-progress-text {
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  margin: 0 !important;
+  width: 100% !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+}
+
+/* Glowing drop-shadows on the progress paths matching their dynamic colors */
+.usage-summary-circle.pct-green svg {
+  filter: drop-shadow(0 0 5px rgba(52, 199, 89, 0.35));
+}
+.usage-summary-circle.pct-orange svg {
+  filter: drop-shadow(0 0 5px rgba(255, 149, 0, 0.35));
+}
+.usage-summary-circle.pct-red svg {
+  filter: drop-shadow(0 0 5px rgba(255, 59, 48, 0.35));
+}
+
+/* Glass lens overlay inside the progress circle */
+.usage-circle-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  margin: auto;
+  transition: all 0.3s ease;
+}
+
+.subscription-page:not(.is-dark) .usage-circle-inner {
+  background: rgba(0, 0, 0, 0.015);
+  border-color: rgba(0, 0, 0, 0.03);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.usage-circle-percent {
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.usage-circle-label {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-top: 3px;
+}
